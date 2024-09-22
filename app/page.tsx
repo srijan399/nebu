@@ -4,7 +4,7 @@ import { BackgroundLines } from "@/components/ui/background-lines";
 function YourApp() {
   return (
     <>
-      <BackgroundLines className="flex items-center justify-center w-full flex-col px-4">
+      <BackgroundLines className="flex items-center justify-center w-full flex-col px-4 bg-background">
         <ConnectButton
           label="Sign in"
           accountStatus={{
