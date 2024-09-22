@@ -12,6 +12,9 @@ import {
 import {
   rainbowWallet,
   walletConnectWallet,
+  coreWallet,
+  ledgerWallet,
+  metaMaskWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 
 import { getConfig } from "./wagmi";
@@ -20,7 +23,7 @@ const connectors = connectorsForWallets(
   [
     {
       groupName: "Recommended",
-      wallets: [rainbowWallet, walletConnectWallet],
+      wallets: [rainbowWallet, walletConnectWallet, coreWallet, metaMaskWallet ],
     },
   ],
   {
@@ -41,7 +44,7 @@ export default function Providers(props: {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           initialChain={11155111}
-          theme={darkTheme()}
+          theme={midnightTheme()}
           coolMode
           modalSize="wide"
         >
