@@ -15,6 +15,9 @@ import {
   coreWallet,
   ledgerWallet,
   metaMaskWallet,
+  argentWallet,
+  omniWallet,
+  imTokenWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 
 import { getConfig } from "./wagmi";
@@ -22,8 +25,12 @@ import { getConfig } from "./wagmi";
 const connectors = connectorsForWallets(
   [
     {
-      groupName: "Recommended",
-      wallets: [rainbowWallet, walletConnectWallet, coreWallet, metaMaskWallet ],
+      groupName: "Popular",
+      wallets: [rainbowWallet, walletConnectWallet, coreWallet, metaMaskWallet],
+    },
+    {
+      groupName: "Other",
+      wallets: [ledgerWallet, argentWallet, omniWallet, imTokenWallet],
     },
   ],
   {
