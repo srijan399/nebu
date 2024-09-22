@@ -7,6 +7,7 @@ import {
   RainbowKitProvider,
   midnightTheme,
   darkTheme,
+  lightTheme,
   connectorsForWallets,
 } from "@rainbow-me/rainbowkit";
 import {
