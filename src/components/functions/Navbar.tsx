@@ -30,10 +30,10 @@ export default function Navbar() {
 
         {/* Navigation Links Centered */}
         <div className="hidden md:flex items-center justify-center gap-6 ml-24">
-          <NavLink href="/about">About</NavLink>
-          <NavLink href="/home">Home</NavLink>
+          <NavLink href="/">Home</NavLink>
           <NavLink href="/campaigns">Campaigns</NavLink>
           <NavLink href="/governance">Governance</NavLink>
+          <NavLink href="/about">About</NavLink>
         </div>
 
         {/* Connect Button and ModeToggle Aligned to End */}
