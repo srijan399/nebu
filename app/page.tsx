@@ -1,10 +1,9 @@
 "use client";
 
 import React from "react";
-import { ModeToggle } from "@/components/theme/theme-switcher";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { useEnsName, useAccount } from "wagmi";
+import Navbar from "@/components/functions/Navbar";
 
 function Landing() {
   const { address } = useAccount(); // Fetch connected address
@@ -16,15 +15,7 @@ function Landing() {
     <>
       <BackgroundLines className="flex items-center justify-center w-full flex-col px-4">
         {/* Theme switcher and connect button in the top-right corner */}
-        <div className="absolute top-4 right-4 flex items-center gap-2">
-          <ModeToggle />
-          <ConnectButton
-            label="Connect Wallet"
-            accountStatus="avatar"
-            chainStatus="none"
-          />
-        </div>
-
+        <Navbar />
         <h2 className="bg-clip-text text-transparent text-center bg-gradient-to-b from-neutral-900 to-neutral-700 dark:from-neutral-600 dark:to-white text-2xl md:text-4xl lg:text-7xl font-sans py-2 md:py-10 relative z-20 font-bold tracking-tight">
           Nebula <br />
         </h2>
@@ -34,7 +25,6 @@ function Landing() {
         </p>
 
         {/* Main content centered */}
-        {/* Other content of the page goes here */}
       </BackgroundLines>
     </>
   );
