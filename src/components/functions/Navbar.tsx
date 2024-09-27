@@ -25,7 +25,11 @@ export default function Navbar() {
       <div className="flex items-center justify-between w-full px-12 py-4 ">
         {/* Nebula Text Aligned to Start */}
         <div className="flex justify-start">
-          <span className="font-bold text-xl">Nebula</span>
+          <Link href="/">
+            <span className="font-bold text-xl font-fredoka cursor-pointer">
+              Nebula
+            </span>
+          </Link>
         </div>
 
         {/* Navigation Links Centered */}
@@ -33,6 +37,7 @@ export default function Navbar() {
           <NavLink href="/">Home</NavLink>
           <NavLink href="/campaigns">Campaigns</NavLink>
           <NavLink href="/governance">Governance</NavLink>
+          <NavLink href="/governance">My Contributions</NavLink>
           <NavLink href="/about">About</NavLink>
         </div>
 
@@ -60,7 +65,7 @@ function NavLink({
   return (
     <Link
       href={href}
-      className="text-text hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+      className="text-text hover:text-primary px-3 py-2 rounded-md text-sm font-bold font-fredoka transition-colors duration-200"
     >
       {children}
     </Link>

@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap");
+
 @layer base {
   :root {
     --background: 240 33% 96%;
@@ -25,7 +27,7 @@
     --ring: 237 76% 40%;
     --radius: 0.5rem;
   }
- 
+
   .dark {
     --background: 240 33% 4%;
     --foreground: 231 23% 94%;
