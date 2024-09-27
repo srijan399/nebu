@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap");
+@layer base {
+  :root {
+    --background: 240 33% 96%;
+    --foreground: 231 23% 6%;
+    --card: 240 33% 96%;
+    --card-foreground: 231 23% 6%;
+    --popover: 240 33% 96%;
+    --popover-foreground: 231 23% 6%;
+    --primary: 235 48% 26%;
+    --primary-foreground: 240 33% 96%;
+    --secondary: 237 62% 65%;
+    --secondary-foreground: 231 23% 6%;
+    --muted: 240 33% 20%;
+    --muted-foreground: 231 23% 70%;
+    --accent: 237 76% 46%;
+    --accent-foreground: 240 33% 96%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 231 23% 6%;
+    --border: 240 33% 20%;
+    --input: 240 33% 20%;
+    --ring: 237 76% 40%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 33% 4%;
+    --foreground: 231 23% 94%;
+    --card: 240 33% 4%;
+    --card-foreground: 231 23% 94%;
+    --popover: 240 33% 4%;
+    --popover-foreground: 231 23% 94%;
+    --primary: 236 48% 74%;
+    --primary-foreground: 240 33% 4%;
+    --secondary: 237 62% 35%;
+    --secondary-foreground: 231 23% 94%;
+    --muted: 240 33% 80%;
+    --muted-foreground: 231 23% 94%;
+    --accent: 237 76% 54%;
+    --accent-foreground: 231 23% 94%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 235 22% 10%;
+    --border: 240 33% 60%;
+    --input: 240 33% 80%;
+    --ring: 237 76% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
