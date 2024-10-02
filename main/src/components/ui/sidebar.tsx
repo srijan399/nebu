@@ -4,6 +4,7 @@ import Link, { LinkProps } from "next/link";
 import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { IconMenu2, IconX } from "@tabler/icons-react";
+import { useDisconnect } from "wagmi";
 
 interface Links {
   label: string;
@@ -165,6 +166,14 @@ export const SidebarLink = ({
   props?: LinkProps;
 }) => {
   const { open, animate } = useSidebar();
+  const { disconnect } = useDisconnect();
+
+  const handleClick = () => {
+    if (link.label === "Logout") {
+      disconnect(); // Disconnect the wallet
+    }
+  };
+
   return (
     <Link
       href={link.href}
@@ -172,6 +181,7 @@ export const SidebarLink = ({
         "flex items-center justify-start gap-2  group/sidebar py-2",
         className
       )}
+      onClick={handleClick} // Handle click here
       {...props}
     >
       {link.icon}

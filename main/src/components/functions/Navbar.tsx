@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ModeToggle } from "../theme/theme-switcher";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const { isConnected } = useAccount();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,11 +37,14 @@ export default function Navbar() {
         </div>
 
         {/* Navigation Links Centered */}
+
         <div className="hidden md:flex items-center justify-center gap-6 ml-24">
           <NavLink href="/">Home</NavLink>
           <NavLink href="/campaigns">Campaigns</NavLink>
           <NavLink href="/governance">Governance</NavLink>
-          <NavLink href="/governance">My Contributions</NavLink>
+          {isConnected && (
+            <NavLink href="/contribution">My Contributions</NavLink>
+          )}
           <NavLink href="/about">About</NavLink>
         </div>
 

@@ -5,7 +5,6 @@ import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
   IconArrowLeft,
   IconBrandTabler,
-  IconPlus,
   IconSettings,
   IconUserBolt,
 } from "@tabler/icons-react";
@@ -14,6 +13,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import AddCamp from "@/components/functions/AddCamp";
 
 function SidebarDemo() {
   const links = [
@@ -32,13 +32,6 @@ function SidebarDemo() {
       ),
     },
     {
-      label: "Make a Campaign",
-      href: "#",
-      icon: (
-        <IconPlus className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
-    },
-    {
       label: "Settings",
       href: "#",
       icon: (
@@ -54,6 +47,7 @@ function SidebarDemo() {
     },
   ];
   const [open, setOpen] = useState(false);
+
   return (
     <div
       className={cn(
@@ -66,9 +60,12 @@ function SidebarDemo() {
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             {open ? <Logo /> : <LogoIcon />}
             <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
+              {links.map(
+                (link, idx) =>
+                  link.label !== "Dashboard" && (
+                    <SidebarLink key={idx} link={link} />
+                  )
+              )}
             </div>
           </div>
           <div>
@@ -127,7 +124,11 @@ export const LogoIcon = () => {
 const Dashboard = () => {
   return (
     <div className="flex flex-1 relative">
-      <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full relative"></div>
+      <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full relative">
+        <div className="flex justify-end">
+          <AddCamp />
+        </div>
+      </div>
     </div>
   );
 };
