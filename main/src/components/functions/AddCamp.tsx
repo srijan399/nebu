@@ -12,26 +12,48 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import abi from "app/abi";
+import { useWriteContract } from "wagmi"; // Correct hook
 
-const contractABI = [
-  "function setUserData(string memory _name, uint _favoriteNumber) public",
-];
+const contractABI = abi;
+const contractAddress = "0xd731cB6F939fB02513d904a51BF4aD745C8a520c";
 
+// Define validation schema
 const formSchema = z.object({
   username: z.string().min(2).max(50),
-  favenumber: z.number().min(1).max(100),
+  favenumber: z.string().refine(val => !isNaN(Number(val)), { message: "Must be a number" })
+    .transform(val => Number(val)) // Transform string to number
 });
 
 const AddCamp = () => {
+  // Set up form handling
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
+      favenumber: 0,
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+  // Set up contract write hook
+  const { writeContract, status, writeContractAsync } = useWriteContract();
+
+  // Handle form submission
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    console.log("Form Data Submitted:", data);
+
+    try {
+      // Call the smart contract function with form data
+      const tx = await writeContractAsync({
+        address: contractAddress,
+        abi: contractABI,
+        functionName: "setUserData",
+        args: [data.username, Number(data.favenumber)], // Pass form data as arguments to the contract
+      });
+      console.log("Transaction submitted!", tx);
+    } catch (err) {
+      console.error("Error submitting transaction:", err);
+    }
   }
 
   return (
@@ -44,11 +66,9 @@ const AddCamp = () => {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="Enter your username" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+              <FormDescription>This is your public display name.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -58,15 +78,18 @@ const AddCamp = () => {
           name="favenumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Fave Number</FormLabel>
+              <FormLabel>Favorite Number</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="Enter your favorite number"  {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={status === 'pending'}>
+          {status === 'pending' ? "Submitting..." : "Submit"}
+        </Button>
+        {/* {error && <p className="text-red-500">Error: {error.message}</p>} */}
       </form>
     </Form>
   );
