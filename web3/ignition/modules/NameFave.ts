@@ -1,20 +1,20 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  // Get the account to deploy the contract
-  const [deployer] = await ethers.getSigners();
+  // Get the ContractFactory for the contract
+  const NameFave = await ethers.deployContract("NameAndFavoriteNumber");
 
-  console.log("Deploying contracts with the account:", deployer.address);
-  console.log("Account balance:", (await deployer.getBalance()).toString());
+  console.log("Deploying NameAndFavoriteNumber...");
 
-  // Compile and deploy the contract
-  const ContractFactory = await ethers.getContractFactory("contractName");
-  const contract = await ContractFactory.deploy();
+  // Wait for the deployment to complete
+  await NameFave.waitForDeployment();
 
-  await contract.deployed();
-  console.log("Contract deployed to:", contract.address);
+  // Get the deployed contract's address
+  const contractAddress = await NameFave.getAddress();
+  console.log("NameAndFavoriteNumber deployed to:", contractAddress);
 }
 
+// Proper error handling
 main()
   .then(() => process.exit(0))
   .catch((error) => {
