@@ -11,6 +11,10 @@ const config: HardhatUserConfig = {
       url: RPC_URL || "",
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
     },
+    amoy : {
+      url: "https://polygon-amoy.g.alchemy.com/v2/nv5NsmwYA2TbzzPi-lRxlBE7U2SPh2WF",
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+    },
   },
 };
 
