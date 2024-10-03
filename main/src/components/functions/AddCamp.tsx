@@ -1,7 +1,10 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { z } from "zod";
+import { set, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -21,7 +24,7 @@ import {
 } from "@/components/ui/popover";
 
 const contractABI = abi;
-const contractAddress = "0xd731cB6F939fB02513d904a51BF4aD745C8a520c";
+const contractAddress = "0x16955047994d6B59cfc21A397ed712b9eeE426Ad";
 
 // Define validation schema
 const formSchema = z.object({
@@ -33,7 +36,14 @@ const formSchema = z.object({
 });
 
 const AddCamp = () => {
-  // Set up form handling
+  const [isMounted, setIsMounted] = useState(false);
+  const [transactionStatus, setTransactionStatus] = useState<string | null>(null);
+  const [transactionHash, setTransactionHash] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,39 +58,74 @@ const AddCamp = () => {
     address: contractAddress,
     abi: contractABI,
     functionName: "getUserData",
-    args: [`${account.address}`], // Pass the user's address as an argument
+    args: [`${account.address}`],
   });
-  // Handle form submission
+
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("Form Data Submitted:", data);
+    setTransactionStatus("Submitting...");
+    setTransactionHash(undefined);
 
     try {
-      // Call the smart contract function with form data
+      // Call the smart contract function with form data using writeContractAsync
       const tx = await writeContractAsync({
         address: contractAddress,
         abi: contractABI,
         functionName: "setUserData",
-        args: [data.username, Number(data.favenumber)], // Pass form data as arguments to the contract
-      });
-      console.log("Transaction submitted!", tx);
+        args: [data.username, Number(data.favenumber)], // Pass form data
+      },
+        {
+          onSuccess(data) {
+            console.log("Transaction successful!", data);
+            // setTransactionStatus("Transaction submitted!");
+            // setTransactionHash(data);
+          },
+          onSettled(data, error) {
+            if (error) {
+              setTransactionStatus("Transaction failed.");
+              console.error("Error on settlement:", error);
+            } else {
+              console.log("Transaction settled:", data);
+              setTransactionStatus("Transaction confirmed!");
+              setTransactionHash(data);
+            }
+          },
+          onError(error) {
+            console.error("Transaction error:", error);
+            setTransactionStatus("Transaction failed. Please try again.");
+          }
+        });
+
+      // Wait for the transaction to be mined/confirmed
+      // const receipt = await tx.wait();
+      // if (receipt.status === 1) {
+      //   setTransactionStatus("Transaction confirmed!");
+      // } else {
+      //   setTransactionStatus("Transaction failed.");
+      // }
     } catch (err) {
       console.error("Error submitting transaction:", err);
+      setTransactionStatus("Transaction failed. Please try again.");
     }
+
   }
 
   function ViewData() {
     if (Array.isArray(data)) {
-      console.log(data[0]);
-      console.log(Number(data[1]));
+      data.map((user) => {
+        console.log("Name:", user.name);
+        console.log("Favorite Number:", Number(user.favoriteNumber));
+      });
     } else {
       console.error("Unexpected data format:", data);
     }
   }
 
+  if (!isMounted) return null;
+
   return (
     <>
       <button onClick={ViewData} className="m-10">
-        view
+        View
       </button>
       <Popover>
         <PopoverTrigger>
@@ -116,10 +161,7 @@ const AddCamp = () => {
                   <FormItem>
                     <FormLabel>Favorite Number</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter your favorite number"
-                        {...field}
-                      />
+                      <Input placeholder="Enter your favorite number" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -131,6 +173,24 @@ const AddCamp = () => {
               {error && <p className="text-red-500">Error: {error.message}</p>}
             </form>
           </Form>
+          {transactionStatus && (
+            <div className="mt-4">
+              <p>Status: {transactionStatus}</p>
+              {transactionHash && (
+                <p>
+                  View on Etherscan:{" "}
+                  <a
+                    href={`https://sepolia.etherscan.io/tx/${transactionHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline"
+                  >
+                    {transactionHash}
+                  </a>
+                </p>
+              )}
+            </div>
+          )}
         </PopoverContent>
       </Popover>
     </>

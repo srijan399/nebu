@@ -10,14 +10,21 @@ const abi = [
     "name": "getUserData",
     "outputs": [
       {
-        "internalType": "string",
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "favoriteNumber",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct NameAndFavoriteNumber.UserData[]",
         "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",
@@ -47,6 +54,11 @@ const abi = [
         "internalType": "address",
         "name": "",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "name": "users",
