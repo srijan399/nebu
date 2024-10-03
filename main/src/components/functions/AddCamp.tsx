@@ -13,7 +13,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import abi from "app/abi";
-import { useWriteContract } from "wagmi"; // Correct hook
+import { useAccount, useWriteContract } from "wagmi"; // Correct hook
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useReadContract } from "wagmi";
 
 const contractABI = abi;
 const contractAddress = "0xd731cB6F939fB02513d904a51BF4aD745C8a520c";
@@ -21,8 +27,10 @@ const contractAddress = "0xd731cB6F939fB02513d904a51BF4aD745C8a520c";
 // Define validation schema
 const formSchema = z.object({
   username: z.string().min(2).max(50),
-  favenumber: z.string().refine(val => !isNaN(Number(val)), { message: "Must be a number" })
-    .transform(val => Number(val)) // Transform string to number
+  favenumber: z
+    .string()
+    .refine((val) => !isNaN(Number(val)), { message: "Must be a number" })
+    .transform((val) => Number(val)), // Transform string to number
 });
 
 const AddCamp = () => {
@@ -36,8 +44,14 @@ const AddCamp = () => {
   });
 
   // Set up contract write hook
-  const { writeContract, status, writeContractAsync } = useWriteContract();
-
+  const { status, writeContractAsync } = useWriteContract();
+  const account = useAccount();
+  const { data } = useReadContract({
+    address: contractAddress,
+    abi: contractABI,
+    functionName: "getUserData",
+    args: [`${account.address}`],
+  });
   // Handle form submission
   async function onSubmit(data: z.infer<typeof formSchema>) {
     console.log("Form Data Submitted:", data);
@@ -56,42 +70,72 @@ const AddCamp = () => {
     }
   }
 
+  function ViewData() {
+    if (Array.isArray(data)) {
+      console.log(data[0]);
+      console.log(Number(data[1]));
+    } else {
+      console.error("Unexpected data format:", data);
+    }
+  }
+
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter your username" {...field} />
-              </FormControl>
-              <FormDescription>This is your public display name.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="favenumber"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Favorite Number</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter your favorite number"  {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" disabled={status === 'pending'}>
-          {status === 'pending' ? "Submitting..." : "Submit"}
-        </Button>
-        {/* {error && <p className="text-red-500">Error: {error.message}</p>} */}
-      </form>
-    </Form>
+    <>
+      <button onClick={ViewData} className="m-10">
+        view
+      </button>
+      <Popover>
+        <PopoverTrigger>
+          <Button className="text-primary-foreground border-primary-foreground">
+            <span className="text-text font-bold font-fredoka border-primary-foreground">
+              Make a Campaign
+            </span>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your username" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      This is your public display name.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="favenumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Favorite Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your favorite number"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" disabled={status === "pending"}>
+                {status === "pending" ? "Submitting..." : "Submit"}
+              </Button>
+              {/* {error && <p className="text-red-500">Error: {error.message}</p>} */}
+            </form>
+          </Form>
+        </PopoverContent>
+      </Popover>
+    </>
   );
 };
 
