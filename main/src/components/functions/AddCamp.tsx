@@ -13,13 +13,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import abi from "app/abi";
-import { useAccount, useWriteContract } from "wagmi"; // Correct hook
+import { useAccount, useWriteContract, useReadContract } from "wagmi"; // Correct hook
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useReadContract } from "wagmi";
 
 const contractABI = abi;
 const contractAddress = "0xd731cB6F939fB02513d904a51BF4aD745C8a520c";
@@ -43,14 +42,13 @@ const AddCamp = () => {
     },
   });
 
-  // Set up contract write hook
-  const { status, writeContractAsync } = useWriteContract();
+  const { status, writeContractAsync, error } = useWriteContract();
   const account = useAccount();
   const { data } = useReadContract({
     address: contractAddress,
     abi: contractABI,
     functionName: "getUserData",
-    args: [`${account.address}`],
+    args: [`${account.address}`], // Pass the user's address as an argument
   });
   // Handle form submission
   async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -130,7 +128,7 @@ const AddCamp = () => {
               <Button type="submit" disabled={status === "pending"}>
                 {status === "pending" ? "Submitting..." : "Submit"}
               </Button>
-              {/* {error && <p className="text-red-500">Error: {error.message}</p>} */}
+              {error && <p className="text-red-500">Error: {error.message}</p>}
             </form>
           </Form>
         </PopoverContent>
