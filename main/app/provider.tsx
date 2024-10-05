@@ -60,7 +60,7 @@ export default function Providers(props: {
     <WagmiProvider config={config} initialState={props.initialState}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
-          initialChain={11155111}
+          initialChain={80002}
           theme={selectedTheme}
           coolMode
           modalSize="wide"
