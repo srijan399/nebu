@@ -178,9 +178,9 @@ const AddCamp = () => {
               <p>Status: {transactionStatus}</p>
               {transactionHash && (
                 <p>
-                  View on Etherscan:{" "}
+                  View on oklink:{" "}
                   <a
-                    href={`https://sepolia.etherscan.io/tx/${transactionHash}`}
+                    href={`https://www.oklink.com/amoy/tx/${transactionHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-500 underline"

@@ -15,6 +15,10 @@ const config: HardhatUserConfig = {
       url: "https://polygon-amoy.g.alchemy.com/v2/nv5NsmwYA2TbzzPi-lRxlBE7U2SPh2WF",
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
     },
+    baseSepolia: {
+      url: "https://base-sepolia.g.alchemy.com/v2/nv5NsmwYA2TbzzPi-lRxlBE7U2SPh2WF",
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+    },
   },
 };
 
