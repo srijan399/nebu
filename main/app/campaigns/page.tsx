@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/functions/Navbar";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
@@ -12,47 +12,46 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import AddCamp from "@/components/functions/AddCamp";
 
 function SidebarDemo() {
-  const links = [
+  const [open, setOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("dashboard"); // Added state for active tab
+
+  const tabs = [
     {
       label: "Dashboard",
-      href: "#",
+      id: "dashboard",
       icon: (
         <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
       label: "Profile",
-      href: "#",
+      id: "profile",
       icon: (
         <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
       label: "Settings",
-      href: "#",
+      id: "settings",
       icon: (
         <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
-    {
-      label: "Logout",
-      href: "/",
-      icon: (
-        <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
-    },
   ];
-  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    // Log active tab for debugging purposes
+    console.log(`Active tab changed to: ${activeTab}`);
+  }, [activeTab]);
 
   return (
     <div
       className={cn(
         "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 max-w-10xl mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
-        "h-[88vh]" // for your use case, use `h-screen` instead of `h-[60vh]`
+        "h-[88vh]"
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
@@ -60,12 +59,18 @@ function SidebarDemo() {
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             {open ? <Logo /> : <LogoIcon />}
             <div className="mt-8 flex flex-col gap-2">
-              {links.map(
-                (link, idx) =>
-                  link.label !== "Dashboard" && (
-                    <SidebarLink key={idx} link={link} />
-                  )
-              )}
+              {tabs.map((tab) => (
+                <div key={tab.id} onClick={() => setActiveTab(tab.id)}>
+                  <SidebarLink
+                    link={{
+                      label: tab.label,
+                      href: "#", // Keeping this as "#" since no actual navigation
+                      icon: tab.icon,
+                    }}
+                    className={activeTab === tab.id ? "text-blue-600" : ""}
+                  />
+                </div>
+              ))}
             </div>
           </div>
           <div>
@@ -87,10 +92,39 @@ function SidebarDemo() {
           </div>
         </SidebarBody>
       </Sidebar>
-      <Dashboard />
+
+      {/* Conditionally render content based on activeTab */}
+      <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full relative">
+        {activeTab === "dashboard" && <Dashboard />}
+        {activeTab === "profile" && <Profile />}
+        {activeTab === "settings" && <Settings />}
+      </div>
     </div>
   );
 }
+
+const Dashboard = () => (
+  <div>
+    <h2 className="text-2xl font-bold">Dashboard</h2>
+    <div className="flex justify-end">
+      <AddCamp />
+    </div>
+  </div>
+);
+
+const Profile = () => (
+  <div>
+    <h2 className="text-2xl font-bold">Profile</h2>
+    <p>This is the profile page content.</p>
+  </div>
+);
+
+const Settings = () => (
+  <div>
+    <h2 className="text-2xl font-bold">Settings</h2>
+    <p>This is the settings page content.</p>
+  </div>
+);
 
 export const Logo = () => {
   return (
@@ -118,18 +152,6 @@ export const LogoIcon = () => {
     >
       <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
     </Link>
-  );
-};
-
-const Dashboard = () => {
-  return (
-    <div className="flex flex-1 relative">
-      <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full relative">
-        <div className="flex justify-end">
-          <AddCamp />
-        </div>
-      </div>
-    </div>
   );
 };
 
