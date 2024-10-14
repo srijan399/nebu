@@ -13,10 +13,14 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import AddCamp from "@/components/functions/AddCamp";
+import { useDisconnect } from "wagmi";
+import { useRouter } from "next/navigation";
 
 function SidebarDemo() {
+  const { disconnect } = useDisconnect();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard"); // Added state for active tab
+  const router = useRouter(); // Initialize useRouter
 
   const tabs = [
     {
@@ -40,12 +44,23 @@ function SidebarDemo() {
         <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
+    {
+      label: "Log Out",
+      id: "back",
+      icon: (
+        <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      ),
+    }
   ];
 
   useEffect(() => {
     // Log active tab for debugging purposes
     console.log(`Active tab changed to: ${activeTab}`);
-  }, [activeTab]);
+    if (activeTab === "back") {
+      disconnect(); // Disconnect the user
+      router.push("/"); // Navigate to the root route
+    }
+  }, [activeTab, router, disconnect]); // Add router to the dependency array
 
   return (
     <div
@@ -64,7 +79,7 @@ function SidebarDemo() {
                   <SidebarLink
                     link={{
                       label: tab.label,
-                      href: "#", // Keeping this as "#" since no actual navigation
+                      href: "", // Keeping this as "#" since no actual navigation
                       icon: tab.icon,
                     }}
                     className={activeTab === tab.id ? "text-blue-600" : ""}
