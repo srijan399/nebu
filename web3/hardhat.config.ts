@@ -22,7 +22,6 @@ const config: HardhatUserConfig = {
     },
   },
   etherscan: {
-    // apiKey: "U9CTZEN3RYUF7MAMHE1DIDVGS2HK9V36U6",
     apiKey: {
       'base-sepolia': 'ETHERSCAN_API',
       'polygonAmoy': 'ETHERSCAN_API',
