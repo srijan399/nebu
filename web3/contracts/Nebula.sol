@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract NameAndFavoriteNumber {
+contract Nebula {
     /* Errors */
     error Nebula__DeadlineMustBeInTheFuture();
 
