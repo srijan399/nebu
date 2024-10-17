@@ -65,9 +65,23 @@ contract Nebula {
     /** Getter Functions */
     function getCampaigns() public view returns (Campaign[] memory) {
         Campaign[] memory allCampaigns = new Campaign[](s_campaignCount);
-        for (uint256 i = 0; i < s_campaignCount; i++) {
+        uint256 copyofCampaignCount = s_campaignCount;
+        for (uint256 i = 0; i < copyofCampaignCount; i++) {
             allCampaigns[i] = campaigns[i];
         }
         return allCampaigns;
+    }
+
+    function getMyCampaigns(address _owner) public view returns (Campaign[] memory) {
+        Campaign[] memory myCampaigns = new Campaign[](s_campaignCount);
+        uint256 count = 0;
+        uint256 copyofCampaignCount = s_campaignCount;
+        for (uint256 i = 0; i < copyofCampaignCount; i++) {
+            if (campaigns[i].owner == _owner) {
+                myCampaigns[count] = campaigns[i];
+                count++;
+            }
+        }
+        return myCampaigns;
     }
 }
