@@ -4,6 +4,9 @@ pragma solidity ^0.8.0;
 contract Nebula {
     /* Errors */
     error Nebula__DeadlineMustBeInTheFuture();
+    error Nebula__TransferFailed();
+    error Nebula__NotOwner();
+    error Nebula__GoalNotReached();
 
     struct Funders {
         address funder;
@@ -25,6 +28,15 @@ contract Nebula {
 
     uint256 public s_campaignCount = 0;
 
+    /* Modifiers */
+    modifier OnlyOwner(uint256 _campaignId) {
+        Campaign storage campaign = campaigns[_campaignId];
+        if (campaign.owner != msg.sender) {
+            revert Nebula__NotOwner();
+        }
+        _;
+    }
+
     function createCampaign(
         string memory _name,
         uint256 _goal,
@@ -33,7 +45,7 @@ contract Nebula {
         string memory _image,
         address _owner
     ) public {
-        if(_deadline < block.timestamp) {
+        if (_deadline < block.timestamp) {
             revert Nebula__DeadlineMustBeInTheFuture();
         }
 
@@ -53,8 +65,10 @@ contract Nebula {
         uint256 _amount = msg.value;
         Campaign storage campaign = campaigns[_campaignId];
 
-        if(campaign.raised + _amount > campaign.goal) {
-            payable(msg.sender).transfer(uint256(campaign.raised + _amount - campaign.goal));
+        if (campaign.raised + _amount > campaign.goal) {
+            payable(msg.sender).transfer(
+                uint256(campaign.raised + _amount - campaign.goal)
+            );
             _amount = campaign.goal - campaign.raised;
         }
 
@@ -62,7 +76,22 @@ contract Nebula {
         campaign.funders.push(Funders(msg.sender, _amount));
     }
 
-    /** Getter Functions */
+    function withdrawFunds(uint256 _campaignId) public OnlyOwner(_campaignId) {
+        Campaign storage campaign = campaigns[_campaignId];
+
+        if (campaign.raised < campaign.goal) {
+            revert Nebula__GoalNotReached();
+        }
+
+        (bool success, ) = payable(msg.sender).call{value: campaign.raised}("");
+        if (!success) {
+            revert Nebula__TransferFailed();
+        }
+
+        campaign.raised = 0;
+    }
+
+    /* Getter Functions */
     function getCampaigns() public view returns (Campaign[] memory) {
         Campaign[] memory allCampaigns = new Campaign[](s_campaignCount);
         uint256 copyofCampaignCount = s_campaignCount;
@@ -72,7 +101,9 @@ contract Nebula {
         return allCampaigns;
     }
 
-    function getMyCampaigns(address _owner) public view returns (Campaign[] memory) {
+    function getMyCampaigns(
+        address _owner
+    ) public view returns (Campaign[] memory) {
         Campaign[] memory myCampaigns = new Campaign[](s_campaignCount);
         uint256 count = 0;
         uint256 copyofCampaignCount = s_campaignCount;
