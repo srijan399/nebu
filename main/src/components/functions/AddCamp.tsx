@@ -111,10 +111,16 @@ const AddCamp = () => {
 
   function ViewData() {
     if (Array.isArray(data)) {
-      data.map((user) => {
-        console.log("Name:", user.name);
-        console.log("Favorite Number:", Number(user.favoriteNumber));
-      });
+      if (data.length === 0) {
+        console.log("No data found for this address.");
+        return;
+      }
+      else {
+        data.map((user) => {
+          console.log("Name:", user.name);
+          console.log("Favorite Number:", Number(user.favoriteNumber));
+        });
+      }
     } else {
       console.error("Unexpected data format:", data);
     }

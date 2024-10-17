@@ -13,10 +13,11 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import AddCamp from "@/components/functions/AddCamp";
-import { useDisconnect } from "wagmi";
+import { useDisconnect, useAccount } from "wagmi";
 import { useRouter } from "next/navigation";
 
 function SidebarDemo() {
+  const { address } = useAccount();
   const { disconnect } = useDisconnect();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard"); // Added state for active tab
@@ -91,8 +92,8 @@ function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: "Manu Arora",
-                href: "#",
+                label: `${address?.slice(0, 7)}...${address?.slice(-5)}`,
+                href: "",
                 icon: (
                   <Image
                     src="https://assets.aceternity.com/manu.png"

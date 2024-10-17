@@ -1,10 +1,10 @@
 import { http, cookieStorage, createConfig, createStorage } from "wagmi";
-import { mainnet, sepolia, polygonAmoy } from "wagmi/chains";
+import { mainnet, sepolia, polygonAmoy, baseSepolia } from "wagmi/chains";
 import { connectorsForWallets } from "@rainbow-me/rainbowkit";
 
 export function getConfig(connectors: ReturnType<typeof connectorsForWallets>) {
   return createConfig({
-    chains: [mainnet, sepolia, polygonAmoy],
+    chains: [mainnet, sepolia, polygonAmoy, baseSepolia],
     connectors,
     storage: createStorage({
       storage: cookieStorage,
@@ -14,6 +14,7 @@ export function getConfig(connectors: ReturnType<typeof connectorsForWallets>) {
       [polygonAmoy.id]: http(),
       [mainnet.id]: http(),
       [sepolia.id]: http(),
+      [baseSepolia.id]: http(),
     },
   });
 }
