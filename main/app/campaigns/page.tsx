@@ -49,7 +49,7 @@ function SidebarDemo() {
     args: [account?.address],
   });
 
-  // console.log("Mydata:", myData);
+  console.log("Mydata:", myData);
 
   useEffect(() => {
     // Log active tab for debugging purposes
@@ -123,7 +123,7 @@ function SidebarDemo() {
     <div
       className={cn(
         "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 max-w-10xl mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
-        "h-[88vh]"
+        "h-[88vh] overflow-y-auto"
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
@@ -167,7 +167,7 @@ function SidebarDemo() {
       </Sidebar>
 
       {/* Conditionally render content based on activeTab */}
-      <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full relative">
+      <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full relative overflow-y-auto">
         {activeTab === "dashboard" && <Dashboard camps={campaigns} />}
         {activeTab === "my-campaigns" && <MyCampaigns data={myData.data} />}
         {activeTab === "settings" && <Settings />}
