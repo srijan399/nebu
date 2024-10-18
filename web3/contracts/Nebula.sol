@@ -46,7 +46,7 @@ contract Nebula {
         address _owner
     ) public {
         if (_deadline < block.timestamp) {
-            revert Nebula__DeadlineMustBeInTheFuture();
+            revert Nebula__DeadlineMustBeInTheFuture(); // Less Gas Consumption than require
         }
 
         Campaign storage newCampaign = campaigns[s_campaignCount];
