@@ -22,6 +22,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { TiPlus } from "react-icons/ti";
 
 const contractABI = abi;
 const contractAddress = "0x07bCD56CE70C891B1c019d36A404F4B681359802";
@@ -61,12 +62,6 @@ const AddCampaign = () => {
 
   const { status, writeContractAsync, error } = useWriteContract();
   const account = useAccount();
-  const { data } = useReadContract({
-    address: contractAddress,
-    abi: contractABI,
-    functionName: "getUserData",
-    args: [`${account.address}`],
-  });
   const desc = 1000000000000000;
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setTransactionStatus("Submitting...");
@@ -124,23 +119,6 @@ const AddCampaign = () => {
     }
   }
 
-  // function ViewData() {
-  //   if (Array.isArray(data)) {
-  //     if (data.length === 0) {
-  //       console.log("No data found for this address.");
-  //       return;
-  //     }
-  //     else {
-  //       data.map((user) => {
-  //         console.log("Name:", user.name);
-  //         console.log("Favorite Number:", Number(user.favoriteNumber));
-  //       });
-  //     }
-  //   } else {
-  //     console.error("Unexpected data format:", data);
-  //   }
-  // }
-
   if (!isMounted) return null;
 
   return (
@@ -148,9 +126,8 @@ const AddCampaign = () => {
       <Popover>
         <PopoverTrigger>
           <Button className="text-primary-foreground border-primary-foreground">
-            <span className="text-text font-bold font-fredoka border-primary-foreground">
-              Make a Campaign
-            </span>
+            <TiPlus className="mr-1 ml-0" />
+            Make a Campaign
           </Button>
         </PopoverTrigger>
         <PopoverContent>
