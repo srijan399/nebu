@@ -24,18 +24,19 @@ import {
 } from "@/components/ui/popover";
 
 const contractABI = abi;
-const contractAddress = "0xDE115676F736F154eEF8398A37e4ACB4d61892e6";
+const contractAddress = "0x07bCD56CE70C891B1c019d36A404F4B681359802";
 
-// Define validation schema
 const formSchema = z.object({
-  username: z.string().min(2).max(50),
-  favenumber: z
+  description: z.string().min(5).max(200), // A string with a minimum length of 5 and a maximum length of 200
+  imageUrl: z.string().url({ message: "Must be a valid URL" }), // A string that must be a valid URL
+  name: z.string().min(2).max(50), // A string with a minimum length of 2 and a maximum length of 50
+  goal: z
     .string()
     .refine((val) => !isNaN(Number(val)), { message: "Must be a number" })
-    .transform((val) => Number(val)), // Transform string to number
+    .transform((val) => Number(val)),
 });
 
-const AddCamp = () => {
+const AddCampaign = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState<string | null>(
     null
@@ -51,8 +52,10 @@ const AddCamp = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      favenumber: 0,
+      description: "",
+      imageUrl: "",
+      name: "",
+      goal: 1,
     },
   });
 
@@ -64,7 +67,7 @@ const AddCamp = () => {
     functionName: "getUserData",
     args: [`${account.address}`],
   });
-
+  const desc = 1000000000000000;
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setTransactionStatus("Submitting...");
     setTransactionHash(undefined);
@@ -75,8 +78,15 @@ const AddCamp = () => {
         {
           address: contractAddress,
           abi: contractABI,
-          functionName: "setUserData",
-          args: [data.username, Number(data.favenumber)], // Pass form data
+          functionName: "createCampaign",
+          args: [
+            data.name,
+            Number(data.goal),
+            desc,
+            data.description,
+            data.imageUrl,
+            account?.address,
+          ], // Pass form data
         },
         {
           onSuccess(data) {
@@ -135,9 +145,6 @@ const AddCamp = () => {
 
   return (
     <>
-      {/* <button onClick={ViewData} className="m-10">
-        View
-      </button> */}
       <Popover>
         <PopoverTrigger>
           <Button className="text-primary-foreground border-primary-foreground">
@@ -151,29 +158,13 @@ const AddCamp = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
-                name="username"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your username" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      This is your public display name.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="favenumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Favorite Number</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter your favorite number"
+                        placeholder="Enter campaign description"
                         {...field}
                       />
                     </FormControl>
@@ -181,34 +172,55 @@ const AddCamp = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={status === "pending"}>
-                {status === "pending" ? "Submitting..." : "Submit"}
-              </Button>
-              {error && <p className="text-red-500">Error: {error.message}</p>}
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Image URL</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter image URL" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="goal"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Goal</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter your goal"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit">Submit</Button>
             </form>
           </Form>
-          {transactionStatus && (
-            <div className="mt-4">
-              <p>Status: {transactionStatus}</p>
-              {transactionHash && (
-                <p>
-                  View on oklink:{" "}
-                  <a
-                    href={`https://www.oklink.com/amoy/tx/${transactionHash}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 underline"
-                  >
-                    {transactionHash}
-                  </a>
-                </p>
-              )}
-            </div>
-          )}
         </PopoverContent>
       </Popover>
     </>
   );
 };
-
-export default AddCamp;
+export default AddCampaign;

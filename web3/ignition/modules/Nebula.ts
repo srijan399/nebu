@@ -2,16 +2,16 @@ import { ethers } from "hardhat";
 
 async function main() {
   // Get the ContractFactory for the contract
-  const NameFave = await ethers.deployContract("NameAndFavoriteNumber");
+  const Nebula = await ethers.deployContract("Nebula");
 
-  console.log("Deploying NameAndFavoriteNumber...");
+  console.log("Deploying Nebula...");
 
   // Wait for the deployment to complete
-  await NameFave.waitForDeployment();
+  await Nebula.waitForDeployment();
 
   // Get the deployed contract's address
-  const contractAddress = await NameFave.getAddress();
-  console.log("NameAndFavoriteNumber deployed to:", contractAddress);
+  const contractAddress = await Nebula.getAddress();
+  console.log("Nebula deployed to:", contractAddress);
 }
 
 // Proper error handling

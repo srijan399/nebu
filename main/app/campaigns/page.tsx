@@ -18,7 +18,7 @@ import {
   IconSettings,
   IconUserBolt,
 } from "@tabler/icons-react";
-import AddCampaign from "@/components/functions/AddCamp";
+import AddCampaign from "@/components/functions/AddCampaign";
 
 function SidebarDemo() {
   const { address } = useAccount();
