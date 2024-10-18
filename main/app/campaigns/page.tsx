@@ -18,9 +18,11 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { TiPlus } from "react-icons/ti";
 import { IoMdWallet } from "react-icons/io";
+import { Lens } from "@/components/ui/lens";
 
 function SidebarDemo() {
   const { address } = useAccount();
+  const [hovering, setHovering] = useState(false);
   const { disconnect } = useDisconnect();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard"); // Added state for active tab
@@ -95,16 +97,9 @@ function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: `${address?.slice(0, 7)}...${address?.slice(-5)}`,
+                label: `${address? `${address.slice(0, 7)}...${address.slice(-5)}` : "Wallet not connected"}`,
                 href: "",
                 icon: (
-                  // <Image
-                  //   src="https://assets.aceternity.com/manu.png"
-                  //   className="h-7 w-7 flex-shrink-0 rounded-full"
-                  //   width={50}
-                  //   height={50}
-                  //   alt="Avatar"
-                  // />
                   <IoMdWallet className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
                 ),
               }}
@@ -145,7 +140,28 @@ const Dashboard = () => (
 const MyCampaigns = () => (
   <div>
     <h2 className="text-2xl font-bold">My Campaigns</h2>
-    <p>My campaigns</p>
+    {/* <p>My campaigns</p> */}
+    <div className="w-96 relative rounded-3xl overflow-hidden max-w-full bg-gradient-to-r from-[#1D2235] to-[#121318] my-10">
+      <div className="relative z-10">
+        <Lens hovering={false}>
+          <Image
+            src="https://images.unsplash.com/photo-1713869820987-519844949a8a?q=80&w=3500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="image"
+            width={500}
+            height={500}
+            className="rounded-2xl w-full h-auto"
+          />
+        </Lens>
+        <motion.div className="py-4 relative z-20 px-4 pt-4 sm:px-6 sm:pt-6 md:px-8 md:pt-8">
+          <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold text-left">
+            Apple Vision Pro
+          </h2>
+          <p className="text-neutral-200 text-left mt-4 text-sm sm:text-base md:text-base">
+            The all new apple vision pro was the best thing that happened around 8 months ago, not anymore.
+          </p>
+        </motion.div>
+      </div>
+    </div>
   </div>
 );
 
