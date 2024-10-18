@@ -2,27 +2,27 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/functions/Navbar";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
-import {
-  IconArrowLeft,
-  IconBrandTabler,
-  IconSettings,
-  IconUserBolt,
-} from "@tabler/icons-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import AddCamp from "@/components/functions/AddCamp";
 import { useDisconnect, useAccount } from "wagmi";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { TiPlus } from "react-icons/ti";
 import { IoMdWallet } from "react-icons/io";
 import { Lens } from "@/components/ui/lens";
+import {
+  IconArrowLeft,
+  IconBrandTabler,
+  IconSettings,
+  IconUserBolt,
+} from "@tabler/icons-react";
+import AddCampaign from "@/components/functions/AddCamp";
 
 function SidebarDemo() {
   const { address } = useAccount();
-  const [hovering, setHovering] = useState(false);
+  // const [hovering, setHovering] = useState(false);
   const { disconnect } = useDisconnect();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard"); // Added state for active tab
@@ -56,7 +56,7 @@ function SidebarDemo() {
       icon: (
         <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
-    }
+    },
   ];
 
   useEffect(() => {
@@ -66,7 +66,7 @@ function SidebarDemo() {
       disconnect(); // Disconnect the user
       router.push("/"); // Navigate to the root route
     }
-  }, [activeTab]);
+  }, [activeTab, router, disconnect]);
 
   return (
     <div
@@ -97,7 +97,11 @@ function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: `${address? `${address.slice(0, 7)}...${address.slice(-5)}` : "Wallet not connected"}`,
+                label: `${
+                  address
+                    ? `${address.slice(0, 7)}...${address.slice(-5)}`
+                    : "Wallet not connected"
+                }`,
                 href: "",
                 icon: (
                   <IoMdWallet className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
@@ -118,24 +122,20 @@ function SidebarDemo() {
   );
 }
 
-const Dashboard = () => (
-  <div>
-    <div className="flex justify-between">
-      <h2 className="text-2xl font-bold">Dashboard</h2>
-      {/* <AddCamp /> */}
-      <Button
-        onClick={() => console.log("Button clicked")}
-        className="pl-3"
-      >
-        <TiPlus className="mr-1 ml-0" />
-        Add Campaign
-      </Button>
+const Dashboard = () => {
+  return (
+    <div>
+      <div className="flex justify-between">
+        <h2 className="text-2xl font-bold">Dashboard</h2>
+        <Button className="pl-3">
+          <TiPlus className="mr-1 ml-0" />
+          Add Campaign
+        </Button>
+      </div>
+      <AddCampaign />
     </div>
-    <div className="flex justify-end">
-      <AddCamp />
-    </div>
-  </div>
-);
+  );
+};
 
 const MyCampaigns = () => (
   <div>
@@ -157,7 +157,8 @@ const MyCampaigns = () => (
             Apple Vision Pro
           </h2>
           <p className="text-neutral-200 text-left mt-4 text-sm sm:text-base md:text-base">
-            The all new apple vision pro was the best thing that happened around 8 months ago, not anymore.
+            The all new apple vision pro was the best thing that happened around
+            8 months ago, not anymore.
           </p>
         </motion.div>
       </div>

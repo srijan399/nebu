@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { set, z } from "zod";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -114,29 +114,30 @@ const AddCamp = () => {
     }
   }
 
-  function ViewData() {
-    if (Array.isArray(data)) {
-      if (data.length === 0) {
-        console.log("No data found for this address.");
-        return;
-      } else {
-        data.map((user) => {
-          console.log("Name:", user.name);
-          console.log("Favorite Number:", Number(user.favoriteNumber));
-        });
-      }
-    } else {
-      console.error("Unexpected data format:", data);
-    }
-  }
+  // function ViewData() {
+  //   if (Array.isArray(data)) {
+  //     if (data.length === 0) {
+  //       console.log("No data found for this address.");
+  //       return;
+  //     }
+  //     else {
+  //       data.map((user) => {
+  //         console.log("Name:", user.name);
+  //         console.log("Favorite Number:", Number(user.favoriteNumber));
+  //       });
+  //     }
+  //   } else {
+  //     console.error("Unexpected data format:", data);
+  //   }
+  // }
 
   if (!isMounted) return null;
 
   return (
     <>
-      <button onClick={ViewData} className="m-10">
+      {/* <button onClick={ViewData} className="m-10">
         View
-      </button>
+      </button> */}
       <Popover>
         <PopoverTrigger>
           <Button className="text-primary-foreground border-primary-foreground">
