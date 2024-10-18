@@ -15,6 +15,9 @@ import { cn } from "@/lib/utils";
 import AddCamp from "@/components/functions/AddCamp";
 import { useDisconnect, useAccount } from "wagmi";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { TiPlus } from "react-icons/ti";
+import { IoMdWallet } from "react-icons/io";
 
 function SidebarDemo() {
   const { address } = useAccount();
@@ -32,8 +35,8 @@ function SidebarDemo() {
       ),
     },
     {
-      label: "Profile",
-      id: "profile",
+      label: "My Campaigns",
+      id: "my-campaigns",
       icon: (
         <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
@@ -61,7 +64,7 @@ function SidebarDemo() {
       disconnect(); // Disconnect the user
       router.push("/"); // Navigate to the root route
     }
-  }, [activeTab, router, disconnect]); // Add router to the dependency array
+  }, [activeTab]);
 
   return (
     <div
@@ -80,7 +83,7 @@ function SidebarDemo() {
                   <SidebarLink
                     link={{
                       label: tab.label,
-                      href: "", // Keeping this as "#" since no actual navigation
+                      href: "",
                       icon: tab.icon,
                     }}
                     className={activeTab === tab.id ? "text-blue-600" : ""}
@@ -95,13 +98,14 @@ function SidebarDemo() {
                 label: `${address?.slice(0, 7)}...${address?.slice(-5)}`,
                 href: "",
                 icon: (
-                  <Image
-                    src="https://assets.aceternity.com/manu.png"
-                    className="h-7 w-7 flex-shrink-0 rounded-full"
-                    width={50}
-                    height={50}
-                    alt="Avatar"
-                  />
+                  // <Image
+                  //   src="https://assets.aceternity.com/manu.png"
+                  //   className="h-7 w-7 flex-shrink-0 rounded-full"
+                  //   width={50}
+                  //   height={50}
+                  //   alt="Avatar"
+                  // />
+                  <IoMdWallet className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
                 ),
               }}
             />
@@ -112,7 +116,7 @@ function SidebarDemo() {
       {/* Conditionally render content based on activeTab */}
       <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full relative">
         {activeTab === "dashboard" && <Dashboard />}
-        {activeTab === "profile" && <Profile />}
+        {activeTab === "my-campaigns" && <MyCampaigns />}
         {activeTab === "settings" && <Settings />}
       </div>
     </div>
@@ -121,17 +125,27 @@ function SidebarDemo() {
 
 const Dashboard = () => (
   <div>
-    <h2 className="text-2xl font-bold">Dashboard</h2>
+    <div className="flex justify-between">
+      <h2 className="text-2xl font-bold">Dashboard</h2>
+      {/* <AddCamp /> */}
+      <Button
+        onClick={() => console.log("Button clicked")}
+        className="pl-3"
+      >
+        <TiPlus className="mr-1 ml-0" />
+        Add Campaign
+      </Button>
+    </div>
     <div className="flex justify-end">
       <AddCamp />
     </div>
   </div>
 );
 
-const Profile = () => (
+const MyCampaigns = () => (
   <div>
-    <h2 className="text-2xl font-bold">Profile</h2>
-    <p>This is the profile page content.</p>
+    <h2 className="text-2xl font-bold">My Campaigns</h2>
+    <p>My campaigns</p>
   </div>
 );
 
@@ -145,7 +159,7 @@ const Settings = () => (
 export const Logo = () => {
   return (
     <Link
-      href="#"
+      href="/"
       className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
     >
       <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
@@ -154,7 +168,7 @@ export const Logo = () => {
         animate={{ opacity: 1 }}
         className="font-medium text-black dark:text-white whitespace-pre"
       >
-        nebula.ai
+        nebula
       </motion.span>
     </Link>
   );

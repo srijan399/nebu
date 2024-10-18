@@ -6,10 +6,13 @@ import { useEnsName, useAccount } from "wagmi";
 import Navbar from "@/components/functions/Navbar";
 
 function Landing() {
-  const { address } = useAccount(); // Fetch connected address
+  const account = useAccount(); // Fetch connected address
+  const address = account?.address; // Extract address from account object
   const { data: ensName } = useEnsName({ address }); // Fetch ENS name if it exists
   console.log(ensName);
-  console.log(address);
+  if (address) {
+    console.log(address);
+  }
 
   return (
     <>
