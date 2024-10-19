@@ -34,7 +34,8 @@ const formSchema = z.object({
   goal: z
     .string()
     .refine((val) => !isNaN(Number(val)), { message: "Must be a number" })
-    .transform((val) => Number(val)),
+    .transform((val) => Number(val))
+    .refine((val) => val > 0, { message: "Must be greater than 0" }),
 });
 
 const AddCampaign = () => {
