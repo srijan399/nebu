@@ -38,6 +38,7 @@ function SidebarDemo() {
     address: contractAddress,
     abi: contractABI,
     functionName: "getCampaigns",
+    refetchInterval: 1000,
   });
 
   // console.log(data);

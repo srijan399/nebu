@@ -178,7 +178,7 @@ function page() {
                 <FormControl>
                   <Calendar
                     mode="single"
-                    selected={field.value}
+                    selected={new Date(field.value)}
                     onSelect={field.onChange}
                     className="rounded-md border"
                   />

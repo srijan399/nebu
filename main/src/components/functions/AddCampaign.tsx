@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import abi from "app/abi";
-import { useAccount, useWriteContract, useReadContract } from "wagmi"; // Correct hook
+import { useAccount, useWriteContract } from "wagmi";
 import {
   Popover,
   PopoverContent,
@@ -26,21 +25,20 @@ import { TiPlus } from "react-icons/ti";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react"
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const contractABI = abi;
 const contractAddress = "0x07bCD56CE70C891B1c019d36A404F4B681359802";
 
 const formSchema = z.object({
-  description: z.string().min(5).max(200), // A string with a minimum length of 5 and a maximum length of 200
-  imageUrl: z.string().url({ message: "Must be a valid URL" }), // A string that must be a valid URL
-  name: z.string().min(2).max(50), // A string with a minimum length of 2 and a maximum length of 50
+  description: z.string().min(5).max(200),
+  imageUrl: z.string().url({ message: "Must be a valid URL" }),
+  name: z.string().min(2).max(50),
   deadline: z.date().refine((date) => date.getTime() > Date.now(), {
     message: "Deadline must be a future date",
   }).transform((val) => (val.getTime() / 1000)),
@@ -53,12 +51,9 @@ const formSchema = z.object({
 
 const AddCampaign = () => {
   const [isMounted, setIsMounted] = useState(false);
-  const [transactionStatus, setTransactionStatus] = useState<string | null>(
-    null
-  );
-  const [transactionHash, setTransactionHash] = useState<string | undefined>(
-    undefined
-  );
+  const [transactionStatus, setTransactionStatus] = useState<string | null>(null);
+  const [transactionHash, setTransactionHash] = useState<string | undefined>(undefined);
+  const [open, setOpen] = useState(false); // State to handle dialog visibility
 
   useEffect(() => {
     setIsMounted(true);
@@ -77,14 +72,13 @@ const AddCampaign = () => {
 
   const { status, writeContractAsync, error } = useWriteContract();
   const account = useAccount();
-  const desc = 1000000000000000;
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    console.log(data);
     setTransactionStatus("Submitting...");
     setTransactionHash(undefined);
 
     try {
-      // Call the smart contract function with form data using writeContractAsync
       const tx = await writeContractAsync(
         {
           address: contractAddress,
@@ -93,17 +87,15 @@ const AddCampaign = () => {
           args: [
             data.name,
             Number(data.goal),
-            desc,
+            data.deadline,
             data.description,
             data.imageUrl,
             account?.address,
-          ], // Pass form data
+          ],
         },
         {
           onSuccess(data) {
             console.log("Transaction successful!", data);
-            // setTransactionStatus("Transaction submitted!");
-            // setTransactionHash(data);
           },
           onSettled(data, error) {
             if (error) {
@@ -113,6 +105,13 @@ const AddCampaign = () => {
               console.log("Transaction settled:", data);
               setTransactionStatus("Transaction confirmed!");
               setTransactionHash(data);
+
+              // Close the dialog and reset the form
+              setOpen(false);
+              form.reset();
+
+              // Notify user about success
+              // alert("Campaign created successfully!");
             }
           },
           onError(error) {
@@ -121,14 +120,6 @@ const AddCampaign = () => {
           },
         }
       );
-
-      // Wait for the transaction to be mined/confirmed
-      // const receipt = await tx.wait();
-      // if (receipt.status === 1) {
-      //   setTransactionStatus("Transaction confirmed!");
-      // } else {
-      //   setTransactionStatus("Transaction failed.");
-      // }
     } catch (err) {
       console.error("Error submitting transaction:", err);
       setTransactionStatus("Transaction failed. Please try again.");
@@ -139,14 +130,14 @@ const AddCampaign = () => {
 
   return (
     <>
-      <Popover>
-        <PopoverTrigger>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger>
           <Button className="text-primary-foreground border-primary-foreground">
             <TiPlus className="mr-1 ml-0" />
             Make a Campaign
           </Button>
-        </PopoverTrigger>
-        <PopoverContent>
+        </DialogTrigger>
+        <DialogContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
@@ -213,25 +204,70 @@ const AddCampaign = () => {
                 name="deadline"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date</FormLabel>
-                    <FormControl>
-                      <Calendar
-                        mode="single"
-                        selected={new Date(field.value)}
-                        onSelect={field.onChange}
-                        className="rounded-md border"
-                      />
-                    </FormControl>
+                    <div className="flex flex-col space-y-2">
+                      <FormLabel>Deadline</FormLabel>
+                      <FormControl>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0 z-50">
+                            <Calendar
+                              mode="single"
+                              selected={new Date(field.value)}
+                              onSelect={field.onChange} // Update form state directly
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </FormControl>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit">Submit</Button>
+              <Button type="submit" disabled={status === "pending"}>
+                {status === "pending" ? "Submitting..." : "Submit"}
+              </Button>
+              {error && <p className="text-red-500">Error: {error.message}</p>}
             </form>
           </Form>
-        </PopoverContent>
-      </Popover>
+
+          {transactionStatus && (
+            <div className="mt-4">
+              <p>Status: {transactionStatus}</p>
+              {transactionHash && (
+                <p>
+                  View on oklink:{" "}
+                  <a
+                    href={`https://www.oklink.com/amoy/tx/${transactionHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline"
+                  >
+                    {transactionHash}
+                  </a>
+                </p>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
+
 export default AddCampaign;
