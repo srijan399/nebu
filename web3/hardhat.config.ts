@@ -3,7 +3,7 @@ import "dotenv/config";
 import "@nomicfoundation/hardhat-ethers";
 import "@nomicfoundation/hardhat-verify";
 
-const { RPC_URL_ETH, RPC_URL_BASE, RPC_URL_AMOY, PRIVATE_KEY, ETHERSCAN_API } = process.env;
+const { RPC_URL_ETH, RPC_URL_BASE, RPC_URL_AMOY, PRIVATE_KEY, ETHERSCAN_API, POLYGONSCAN_API } = process.env;
 
 const config: HardhatUserConfig = {
   solidity: "0.8.18",
@@ -24,7 +24,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       'base-sepolia': `${ETHERSCAN_API}`,
-      'polygonAmoy': `${ETHERSCAN_API}`,
+      'polygonAmoy': `${POLYGONSCAN_API}`,
       'sepolia': `${ETHERSCAN_API}`,
     },
     customChains: [
