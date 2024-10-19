@@ -19,16 +19,26 @@ import {
   argentWallet,
   omniWallet,
   imTokenWallet,
+  coinbaseWallet,
 } from "@rainbow-me/rainbowkit/wallets";
+
 import { useTheme } from "next-themes";
 
 import { getConfig } from "./wagmi";
+
+coinbaseWallet.preference = "smartWalletOnly";
 
 const connectors = connectorsForWallets(
   [
     {
       groupName: "Popular",
-      wallets: [rainbowWallet, walletConnectWallet, coreWallet, metaMaskWallet],
+      wallets: [
+        rainbowWallet,
+        walletConnectWallet,
+        coreWallet,
+        metaMaskWallet,
+        coinbaseWallet,
+      ],
     },
     {
       groupName: "Other",

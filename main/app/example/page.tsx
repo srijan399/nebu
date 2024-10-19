@@ -23,9 +23,7 @@ export default function LensDemo() {
               className="rounded-2xl"
             />
           </Lens>
-          <motion.div
-            className="py-4 relative z-20"
-          >
+          <motion.div className="py-4 relative z-20">
             <h2 className="text-white text-2xl text-left font-bold">
               Apple Vision Pro
             </h2>

@@ -23,6 +23,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { TiPlus } from "react-icons/ti";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const contractABI = abi;
 const contractAddress = "0x07bCD56CE70C891B1c019d36A404F4B681359802";
@@ -34,7 +43,8 @@ const formSchema = z.object({
   goal: z
     .string()
     .refine((val) => !isNaN(Number(val)), { message: "Must be a number" })
-    .transform((val) => Number(val)),
+    .transform((val) => Number(val))
+    .refine((val) => val > 0, { message: "Must be greater than 0" }),
 });
 
 const AddCampaign = () => {
@@ -63,6 +73,7 @@ const AddCampaign = () => {
   const { status, writeContractAsync, error } = useWriteContract();
   const account = useAccount();
   const desc = 1000000000000000;
+
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setTransactionStatus("Submitting...");
     setTransactionHash(undefined);
