@@ -32,6 +32,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Calendar } from "@/components/ui/calendar";
 
 const contractABI = abi;
 const contractAddress = "0x07bCD56CE70C891B1c019d36A404F4B681359802";
@@ -40,6 +41,9 @@ const formSchema = z.object({
   description: z.string().min(5).max(200), // A string with a minimum length of 5 and a maximum length of 200
   imageUrl: z.string().url({ message: "Must be a valid URL" }), // A string that must be a valid URL
   name: z.string().min(2).max(50), // A string with a minimum length of 2 and a maximum length of 50
+  deadline: z.date().refine((date) => date.getTime() > Date.now(), {
+    message: "Deadline must be a future date",
+  }).transform((val) => (val.getTime() / 1000)),
   goal: z
     .string()
     .refine((val) => !isNaN(Number(val)), { message: "Must be a number" })
@@ -66,6 +70,7 @@ const AddCampaign = () => {
       description: "",
       imageUrl: "",
       name: "",
+      deadline: new Date().getTime() / 1000,
       goal: 1,
     },
   });
@@ -197,6 +202,24 @@ const AddCampaign = () => {
                         type="number"
                         placeholder="Enter your goal"
                         {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="deadline"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Date</FormLabel>
+                    <FormControl>
+                      <Calendar
+                        mode="single"
+                        selected={new Date(field.value)}
+                        onSelect={field.onChange}
+                        className="rounded-md border"
                       />
                     </FormControl>
                     <FormMessage />
