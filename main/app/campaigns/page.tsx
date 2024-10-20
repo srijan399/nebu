@@ -461,27 +461,33 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
       </CardBody>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="w-68">
-          <Input
-            placeholder="Enter amount in POL"
-            type="number"
-            value={fund}
-            onChange={(e) => setFund(e.target.value)} // Update fund value
-            style={{
-              appearance: "none", // Remove spinner arrows
-            }}
-            className="w-52 mt-4"
-          />
-          <button
-            className="px-8 py-2 rounded-md bg-teal-500 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-teal-500"
-            onClick={() => {
-              handleFund();
-              setOpen(false); // Close the dialog here
-            }}
-          >
-            Fund
-          </button>
-        </DialogContent>
+        {address ? (
+          <DialogContent className="w-68">
+            <Input
+              placeholder="Enter amount in POL"
+              type="number"
+              value={fund}
+              onChange={(e) => setFund(e.target.value)} // Update fund value
+              style={{
+                appearance: "none", // Remove spinner arrows
+              }}
+              className="w-52 mt-4"
+            />
+            <button
+              className="px-8 py-2 rounded-md bg-teal-500 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-teal-500"
+              onClick={() => {
+                handleFund();
+                setOpen(false); // Close the dialog here
+              }}
+            >
+              Fund
+            </button>
+          </DialogContent>
+        ) : (
+          <DialogContent className="w-68">
+            <p>Please connect your wallet to fund this campaign.</p>
+          </DialogContent>
+        )}
       </Dialog>
     </CardContainer>
   );
