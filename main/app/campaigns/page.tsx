@@ -42,7 +42,7 @@ interface Campaign {
 }
 
 const contractABI = abi;
-const contractAddress = "0x761eeF428035541f64EcB883bF3C067e8F398b84";
+const contractAddress = "0xe7B54F0Fe576E8339152BCE26db002B455c24dE4";
 
 function SidebarDemo() {
   const account = useAccount();
@@ -257,7 +257,7 @@ function MyCampaigns(props: { data: Campaign[] }) {
                     {camp.description}
                   </p>
                   <button className="shadow-[0_0_0_3px_#000000_inset] px-2 w-32 text-base py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 mt-2 disabled">
-                    Goal: {Number(camp.goal)} POL
+                    Goal: {Number(camp.goal) / 10 ** 18} POL
                   </button>
                   <div className="flex justify-evenly items-center mt-4 w-[90%] gap-10 text-base">
                     <ProgressDemo
@@ -325,6 +325,7 @@ export default function Campaign() {
 
 export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
   const { camp, idx } = props;
+  const pol_to_eth = 0.00014;
 
   const [open, setOpen] = useState(false); // State to control dialog visibility
   const [raised, setRaised] = useState<number>(0); // State to store raised amount
@@ -412,7 +413,7 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
         >
           {/* <button className="px-8 py-0.5  border-2 border-black dark:border-white uppercase bg-white text-black transition duration-200 text-sm shadow-[1px_1px_rgba(0,0,0),2px_2px_rgba(0,0,0),3px_3px_rgba(0,0,0),4px_4px_rgba(0,0,0),5px_5px_0px_0px_rgba(0,0,0)] dark:shadow-[1px_1px_rgba(255,255,255),2px_2px_rgba(255,255,255),3px_3px_rgba(255,255,255),4px_4px_rgba(255,255,255),5px_5px_0px_0px_rgba(255,255,255)] "></button> */}
           <button className="shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 mt-2 disabled">
-            Goal: {Number(camp.goal)} POL
+            Goal: {Number(camp.goal) / 10 ** 18} POL
           </button>
         </CardItem>
         <CardItem
@@ -436,7 +437,10 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
             as="button"
             className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white"
           >
-            <ProgressDemo raised={raised} goal={Number(camp.goal)} />
+            <ProgressDemo
+              raised={raised / 10 ** 18}
+              goal={Number(camp.goal) / 10 ** 18}
+            />
           </CardItem>
           <CardItem
             translateZ={20}

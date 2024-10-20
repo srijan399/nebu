@@ -29,7 +29,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 const contractABI = abi;
-const contractAddress = "0x761eeF428035541f64EcB883bF3C067e8F398b84";
+const contractAddress = "0xe7B54F0Fe576E8339152BCE26db002B455c24dE4";
 
 const formSchema = z.object({
   description: z.string().min(5).max(200),
@@ -89,7 +89,7 @@ const AddCampaign = () => {
           functionName: "createCampaign",
           args: [
             data.name,
-            Number(data.goal),
+            Number(data.goal * 10 ** 18),
             data.deadline,
             data.description,
             data.imageUrl,
