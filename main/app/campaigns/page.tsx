@@ -228,55 +228,59 @@ function Dashboard(props: { camps: Campaign[] }) {
 }
 
 function MyCampaigns(props: { data: Campaign[] }) {
+  const { address } = useAccount();
   console.log("props:", props.data);
   const myCamps = props.data;
 
-  const [disabled, setDisabled] = useState(false);
   return (
     <div>
       <h2 className="text-2xl font-bold">My Campaigns</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-        {myCamps.length > 0 ? (
-          myCamps.map((camp, index) => (
-            <div className="w-96 relative rounded-3xl overflow-hidden max-w-full bg-gradient-to-r from-[#1D2235] to-[#121318] my-10">
-              <div className="relative z-10">
-                <Lens hovering={false}>
-                  <Image
-                    src={camp.image}
-                    alt={camp.name}
-                    width={350}
-                    height={350}
-                    className="rounded-2xl w-full h-auto"
-                  />
-                </Lens>
-                <motion.div className="py-4 relative z-20 px-4 pt-4 sm:px-6 sm:pt-6 md:px-8 md:pt-8">
-                  <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold text-left">
-                    {camp.name}
-                  </h2>
-                  <p className="text-neutral-200 text-left my-4 text-sm sm:text-base md:text-base font-fredoka">
-                    {camp.description}
-                  </p>
-                  <button className="shadow-[0_0_0_3px_#000000_inset] px-2 w-32 text-base py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 mt-2 disabled">
-                    Goal: {Number(camp.goal) / 10 ** 18} POL
-                  </button>
-                  <div className="flex justify-evenly items-center mt-4 w-[90%] gap-10 text-base">
-                    <ProgressDemo
-                      raised={Number(camp.raised)}
-                      goal={Number(camp.goal)}
+        {address ? (
+          myCamps.length > 0 ? (
+            myCamps.map((camp, index) => (
+              <div className="w-96 relative rounded-3xl overflow-hidden max-w-full bg-gradient-to-r from-[#1D2235] to-[#121318] my-10">
+                <div className="relative z-10">
+                  <Lens hovering={false}>
+                    <Image
+                      src={camp.image}
+                      alt={camp.name}
+                      width={350}
+                      height={350}
+                      className="rounded-2xl w-full h-auto"
                     />
-                    <button
-                      className="px-3 py-4 w-[40%] rounded-full bg-[#1ED760] font-bold text-white text-xs tracking-widest uppercase transform hover:scale-105 hover:bg-[#21e065] transition-colors duration-200"
-                      disabled
-                    >
-                      Withdraw
+                  </Lens>
+                  <motion.div className="py-4 relative z-20 px-4 pt-4 sm:px-6 sm:pt-6 md:px-8 md:pt-8">
+                    <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold text-left">
+                      {camp.name}
+                    </h2>
+                    <p className="text-neutral-200 text-left my-4 text-sm sm:text-base md:text-base font-fredoka">
+                      {camp.description}
+                    </p>
+                    <button className="shadow-[0_0_0_3px_#000000_inset] px-2 w-32 text-base py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 mt-2 disabled">
+                      Goal: {Number(camp.goal) / 10 ** 18} POL
                     </button>
-                  </div>
-                </motion.div>
+                    <div className="flex justify-evenly items-center mt-4 w-[90%] gap-10 text-base">
+                      <ProgressDemo
+                        raised={Number(camp.raised)}
+                        goal={Number(camp.goal)}
+                      />
+                      <button
+                        className="px-3 py-4 w-[40%] rounded-full bg-[#1ED760] font-bold text-white text-xs tracking-widest uppercase transform hover:scale-105 hover:bg-[#21e065] transition-colors duration-200"
+                        disabled
+                      >
+                        Withdraw
+                      </button>
+                    </div>
+                  </motion.div>
+                </div>
               </div>
-            </div>
-          ))
+            ))
+          ) : (
+            <p>No campaigns available.</p>
+          )
         ) : (
-          <p>No campaigns available.</p>
+          <p>Please connect your wallet to view your campaigns.</p>
         )}
       </div>
     </div>
@@ -387,6 +391,8 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
     }
   }
 
+  const timestamp = new Date(Number(camp.deadline) * 1000).toLocaleDateString();
+
   return (
     <CardContainer
       className="inter-var w-[60vh]"
@@ -409,12 +415,15 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
         <CardItem
           as="p"
           translateZ="60"
-          className="text-white-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
+          className="text-white-500 text-sm max-w-sm mt-2 dark:text-neutral-300 flex items-center font-fredoka space-x-5"
         >
           {/* <button className="px-8 py-0.5  border-2 border-black dark:border-white uppercase bg-white text-black transition duration-200 text-sm shadow-[1px_1px_rgba(0,0,0),2px_2px_rgba(0,0,0),3px_3px_rgba(0,0,0),4px_4px_rgba(0,0,0),5px_5px_0px_0px_rgba(0,0,0)] dark:shadow-[1px_1px_rgba(255,255,255),2px_2px_rgba(255,255,255),3px_3px_rgba(255,255,255),4px_4px_rgba(255,255,255),5px_5px_0px_0px_rgba(255,255,255)] "></button> */}
           <button className="shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 mt-2 disabled">
             Goal: {Number(camp.goal) / 10 ** 18} POL
           </button>
+          <p className="font-bold font-fredoka uppercase mt-2">
+            Deadline: {timestamp}
+          </p>
         </CardItem>
         <CardItem
           translateZ="100"
@@ -437,10 +446,7 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
             as="button"
             className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white"
           >
-            <ProgressDemo
-              raised={raised / 10 ** 18}
-              goal={Number(camp.goal) / 10 ** 18}
-            />
+            <ProgressDemo raised={raised} goal={Number(camp.goal)} />
           </CardItem>
           <CardItem
             translateZ={20}
