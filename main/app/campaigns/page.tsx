@@ -337,7 +337,7 @@ function MyCampaigns(props: { data: Campaign[] }) {
                       {camp.description}
                     </p>
                     <button className="shadow-[0_0_0_3px_#000000_inset] px-2 w-32 text-base py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 mt-2 disabled">
-                      Goal: {Number(camp.goal) / 10 ** 18} POL
+                      Goal: {Number(camp.goal) / 10 ** 18} ETH
                     </button>
                     <div className="flex justify-evenly items-center mt-4 w-[90%] gap-10 text-base">
                       <ProgressDemo
@@ -499,7 +499,7 @@ function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
           className="text-white-500 text-sm max-w-sm mt-2 dark:text-neutral-300 flex items-center font-fredoka space-x-5"
         >
           <button className="shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 mt-2 disabled">
-            Goal: {Number(camp.goal) / 10 ** 18} POL
+            Goal: {Number(camp.goal) / 10 ** 18} ETH
           </button>
           <p className="font-bold font-fredoka uppercase mt-2">
             Deadline: {timestamp}
@@ -555,7 +555,7 @@ function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
         {address ? (
           <DialogContent className="w-68">
             <Input
-              placeholder="Enter amount in POL"
+              placeholder="Enter amount in ETH"
               type="number"
               value={fund}
               onChange={(e) => setFund(e.target.value)} // Update fund value

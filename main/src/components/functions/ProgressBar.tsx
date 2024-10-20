@@ -24,7 +24,7 @@ export function ProgressDemo({ raised, goal }: ProgressProps) {
   return (
     <div className="w-full">
       <p className="font-fredoka mb-2 font-bold text-sm">
-        Raised: {raised / 10 ** 18} / {goal / 10 ** 18} POL
+        Raised: {raised / 10 ** 18} / {goal / 10 ** 18} ETH
       </p>
       <Progress value={progress} className="w-[95%]" />
       {/* Adjust the width as needed */}

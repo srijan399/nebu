@@ -188,7 +188,7 @@ const AddCampaign = () => {
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Enter your goal (in POL)"
+                        placeholder="Enter your goal (in ETH)"
                         {...field}
                       />
                     </FormControl>
