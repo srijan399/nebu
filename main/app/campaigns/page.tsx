@@ -366,7 +366,7 @@ function MyCampaigns(props: { data: Campaign[] }) {
   );
 }
 
-export const Logo = () => {
+const Logo = () => {
   return (
     <Link
       href="/"
@@ -384,7 +384,7 @@ export const Logo = () => {
   );
 };
 
-export const LogoIcon = () => {
+const LogoIcon = () => {
   return (
     <Link
       href="#"
