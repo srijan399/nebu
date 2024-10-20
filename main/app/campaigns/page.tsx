@@ -412,27 +412,27 @@ function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
 
   const [open, setOpen] = useState(false); // State to control fund dialog visibility
   const [ownerDialogOpen, setOwnerDialogOpen] = useState(false); // State to control owner dialog visibility
-  const [raised, setRaised] = useState<number>(0); // State to store raised amount
+  // const [raised, setRaised] = useState<number>(0);
   const [fund, setFund] = useState<string>(""); // State to store fund input as a string
   const { address } = useAccount();
-
+  // type CampaignData = [number, string, string, number, number, number, string, string];
   console.log("Campaign data:", camp);
   const { writeContractAsync } = useWriteContract();
-  const { data: campaign, refetch } = useReadContract({
-    address: contractAddress,
-    abi: contractABI,
-    functionName: "campaigns",
-    args: [idx],
-  });
-
-  // Update the raised amount when campaign data is loaded
-  useEffect(() => {
-    if (campaign) {
-      const newRaisedAmount = Number(campaign[4]); // Adjust index if necessary
-      console.log("Updated raised amount:", newRaisedAmount);
-      setRaised(newRaisedAmount);
-    }
-  }, [campaign]);
+  // const { data: campaign, refetch } = useReadContract<CampaignData, string, [number] >({
+  //   address: contractAddress,
+  //   abi: contractABI,
+  //   functionName: "campaigns",
+  //   args: [idx],
+  // });
+  // console.log("Campaign data from contract:", campaign);
+  // // Update the raised amount when campaign data is loaded
+  // useEffect(() => {
+  //   if (campaign) {
+  //   const newRaisedAmount = Number(campaign[4]); // Adjust index if necessary
+  //     console.log("Updated raised amount:", newRaisedAmount);
+  //     setRaised(newRaisedAmount);
+  //   }
+  // }, [campaign]);
 
   async function handleFund() {
     if (address && Number(fund) > 0) {
