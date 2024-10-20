@@ -29,7 +29,7 @@ Solidity
 Hardhat (testnet deployment on Base Sepolia)
 
 ## Installation
-Although we have a publicly accessible URL at "https://nebula-two-opal.vercel.app", here's the guide for installation into your local machine:
+Although we have a publicly accessible URL at [Nebula](https://nebula-two-opal.vercel.app), here's the guide for installation into your local machine:
 
 Clone the repository:
 ``` 
