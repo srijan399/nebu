@@ -336,6 +336,7 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
   const [fund, setFund] = useState<string>(""); // State to store fund input as a string
   const { address } = useAccount();
 
+  console.log("Campaign data:", camp);
   const { writeContractAsync } = useWriteContract();
   const { data: campaign, refetch } = useReadContract({
     address: contractAddress,
@@ -446,7 +447,7 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
             as="button"
             className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white"
           >
-            <ProgressDemo raised={raised} goal={Number(camp.goal)} />
+            <ProgressDemo raised={Number(camp.raised)} goal={Number(camp.goal)} />
           </CardItem>
           <CardItem
             translateZ={20}
