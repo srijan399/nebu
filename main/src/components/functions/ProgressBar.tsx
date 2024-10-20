@@ -23,10 +23,10 @@ export function ProgressDemo({ raised, goal }: ProgressProps) {
 
   return (
     <div className="w-full">
-      <p className="font-fredoka mb-2 font-bold">
+      <p className="font-fredoka mb-2 font-bold text-sm">
         Raised: {raised} / {goal} POL
       </p>
-      <Progress value={progress} className="w-[100%]" />
+      <Progress value={progress} className="w-[95%]" />
       {/* Adjust the width as needed */}
       {/* <p>{progress.toFixed(2)}%</p> Display the progress percentage */}
     </div>

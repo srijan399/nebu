@@ -230,6 +230,8 @@ function Dashboard(props: { camps: Campaign[] }) {
 function MyCampaigns(props: { data: Campaign[] }) {
   console.log("props:", props.data);
   const myCamps = props.data;
+
+  const [disabled, setDisabled] = useState(false);
   return (
     <div>
       <h2 className="text-2xl font-bold">My Campaigns</h2>
@@ -257,6 +259,18 @@ function MyCampaigns(props: { data: Campaign[] }) {
                   <button className="shadow-[0_0_0_3px_#000000_inset] px-2 w-32 text-base py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 mt-2 disabled">
                     Goal: {Number(camp.goal)} POL
                   </button>
+                  <div className="flex justify-evenly items-center mt-4 w-[90%] gap-10 text-base">
+                    <ProgressDemo
+                      raised={Number(camp.raised)}
+                      goal={Number(camp.goal)}
+                    />
+                    <button
+                      className="px-3 py-4 w-[40%] rounded-full bg-[#1ED760] font-bold text-white text-xs tracking-widest uppercase transform hover:scale-105 hover:bg-[#21e065] transition-colors duration-200"
+                      disabled
+                    >
+                      Withdraw
+                    </button>
+                  </div>
                 </motion.div>
               </div>
             </div>
