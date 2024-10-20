@@ -11,23 +11,21 @@ import {
   useAccount,
   useReadContract,
   useWriteContract,
-  useBalance,
   useWaitForTransactionReceipt,
 } from "wagmi";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { IoMdWallet } from "react-icons/io";
 import { Lens } from "@/components/ui/lens";
 import {
   IconArrowLeft,
   IconBrandTabler,
-  IconSettings,
   IconUserBolt,
 } from "@tabler/icons-react";
 import AddCampaign from "@/components/functions/AddCampaign";
 import abi from "app/abi";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ProgressDemo } from "@/components/functions/ProgressBar";
 
@@ -54,7 +52,7 @@ function SidebarDemo() {
   const [activeTab, setActiveTab] = useState("dashboard"); // Added state for active tab
   const router = useRouter(); // Initialize useRouter
   const [campaigns, setCampaigns] = useState<any[]>([]);
-  const [myCampaigns, setMyCampaigns] = useState<any[]>([]);
+  // const [myCampaigns, setMyCampaigns] = useState<any[]>([]);
 
   const { data, refetch } = useReadContract({
     address: contractAddress,
@@ -88,33 +86,32 @@ function SidebarDemo() {
     functionName: "getMyCampaigns",
     args: [account?.address],
   });
-  
+
   const { refetch: refetchMyCampaigns } = useReadContract({
     address: contractAddress,
     abi: contractABI,
     functionName: "getMyCampaigns",
     args: [account?.address],
   });
-  
+
   useEffect(() => {
     console.log("Setting up refetch interval for getMyCampaigns");
-  
+
     const interval = setInterval(() => {
       refetchMyCampaigns()
-        .then((result) => {
+        .then((result: any) => {
           console.log("MyCampaigns data refetched: ", result);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error("Error during refetch of MyCampaigns: ", error);
         });
     }, 5000);
-  
+
     return () => {
       console.log("Clearing refetch interval for getMyCampaigns");
       clearInterval(interval);
     };
   }, [refetchMyCampaigns]);
-  
 
   console.log("My data:", myData.data);
 
@@ -150,7 +147,7 @@ function SidebarDemo() {
         return;
       } else {
         console.log("Data found for this address.", myData.data);
-        setMyCampaigns(myData.data);
+        // setMyCampaigns(myData.data);
       }
     }
   }
@@ -208,13 +205,14 @@ function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: `${account?.address
+                label: `${
+                  account?.address
                     ? `${account?.address.slice(
-                      0,
-                      7
-                    )}...${account?.address.slice(-5)}`
+                        0,
+                        7
+                      )}...${account?.address.slice(-5)}`
                     : "Wallet not connected"
-                  }`,
+                }`,
                 href: "",
                 icon: (
                   <IoMdWallet className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
@@ -228,7 +226,9 @@ function SidebarDemo() {
       {/* Conditionally render content based on activeTab */}
       <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full relative overflow-y-auto">
         {activeTab === "dashboard" && <Dashboard camps={campaigns} />}
-        {activeTab === "my-campaigns" && <MyCampaigns data={myData.data as Campaign[]} />}
+        {activeTab === "my-campaigns" && (
+          <MyCampaigns data={myData.data as Campaign[]} />
+        )}
       </div>
     </div>
   );
@@ -282,12 +282,12 @@ function MyCampaigns(props: { data: Campaign[] }) {
           args: [idx],
         },
         {
-          onSuccess(data) {
+          onSuccess(data: any) {
             console.log("Transaction successful!", data);
             // setTransactionStatus("Transaction submitted!");
             // setTransactionHash(data);
           },
-          onSettled(data, error) {
+          onSettled(data: any, error: any) {
             if (error) {
               setTransactionStatus("Transaction failed.");
               console.error("Error on settlement:", error);
@@ -297,7 +297,7 @@ function MyCampaigns(props: { data: Campaign[] }) {
               setTransactionHash(data);
             }
           },
-          onError(error) {
+          onError(error: any) {
             console.error("Transaction error:", error);
             setTransactionStatus("Transaction failed. Please try again.");
           },
@@ -524,7 +524,10 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
             as="button"
             className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white"
           >
-            <ProgressDemo raised={Number(camp.raised)} goal={Number(camp.goal)} />
+            <ProgressDemo
+              raised={Number(camp.raised)}
+              goal={Number(camp.goal)}
+            />
           </CardItem>
           <CardItem
             translateZ={20}
@@ -579,11 +582,11 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
       {/* Dialog for campaign owner */}
       <Dialog open={ownerDialogOpen} onOpenChange={setOwnerDialogOpen}>
         <DialogContent className="w-68">
-          <p className="text-center font-bold py-3">You are the owner of the Campaign.</p>
+          <p className="text-center font-bold py-3">
+            You are the owner of the Campaign.
+          </p>
         </DialogContent>
       </Dialog>
     </CardContainer>
   );
 }
-
-
