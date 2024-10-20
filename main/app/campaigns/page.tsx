@@ -205,14 +205,13 @@ function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: `${
-                  account?.address
-                    ? `${account?.address.slice(
-                        0,
-                        7
-                      )}...${account?.address.slice(-5)}`
-                    : "Wallet not connected"
-                }`,
+                label: `${account?.address
+                  ? `${account?.address.slice(
+                    0,
+                    7
+                  )}...${account?.address.slice(-5)}`
+                  : "Wallet not connected"
+                  }`,
                 href: "",
                 icon: (
                   <IoMdWallet className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
@@ -448,23 +447,23 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
           functionName: "fundCampaign",
           args: [idx],
           value: BigInt(Number(fund) * 10 ** 18),
-        });
-
-        const {
-          isSuccess,
-          isError,
-          data: receipt,
-        } = await useWaitForTransactionReceipt({
-          hash: tx.hash,
-        });
-
-        if (isSuccess) {
-          console.log("Transaction successful:", receipt);
-          // Refetch campaign data after funding
-          await refetch();
-        } else if (isError) {
-          console.error("Transaction failed");
-        }
+        },
+          {
+            onSuccess(data) {
+              console.log("Transaction successful!", data);
+            },
+            onSettled(data, error) {
+              if (error) {
+                console.error("Error on settlement:", error);
+              } else {
+                console.log("Transaction settled:", data);
+              }
+            },
+            onError(error) {
+              console.error("Transaction error:", error);
+            }
+          }
+        );
       } catch (error) {
         console.error("Error funding campaign:", error);
       }
