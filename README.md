@@ -22,11 +22,11 @@ View ongoing campaigns, total amounts raised, and voting results.
 
 ## Tech Stack
 ### Frontend: 
-Next.js, RainbowKit UI, wagmi
+`Next.js`, `RainbowKit UI`, `wagmi`
 ### Smart Contracts: 
-Solidity
+`Solidity`
 ### Deployment: 
-Hardhat (testnet deployment on Base Sepolia)
+`Hardhat` (testnet deployment on Base Sepolia)
 
 ## Installation
 Although we have a publicly accessible URL at [Nebula](https://nebula-two-opal.vercel.app), here's the guide for installation into your local machine:
@@ -41,7 +41,7 @@ cd main
 npm i
 npm run dev
 ```
-The contract is already deployed at the address 0x60B543d0835f879F8F7D721Ba45BBb809Bba4a19 at Base Sepolia Test Network.
+The contract is already deployed at the address `0x60B543d0835f879F8F7D721Ba45BBb809Bba4a19` at Base Sepolia Test Network.
 Have fun navigating through our application. Cheers!
 
 We welcome contributions! Please fork the repository and submit a pull request.
