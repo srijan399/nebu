@@ -2,7 +2,7 @@ compile:
 	npx hardhat compile
 
 deploy:
-	npx hardhat run ignition/modules/Nebula.ts --network amoy
+	npx hardhat run ignition/modules/Nebula.ts --network baseSepolia
 
 verify:
 	@if [ "$(network)" = "sepolia" ]; then \
@@ -10,7 +10,7 @@ verify:
 	elif [ "$(network)" = "amoy" ]; then \
 		npx hardhat verify --network amoy 0x518Cccfff4a08886B6ccb65B6aAE83af75Bc20c6; \
 	elif [ "$(network)" = "basesepolia" ]; then \
-		npx hardhat verify --network baseSepolia 0xDE115676F736F154eEF8398A37e4ACB4d61892e6; \
+		npx hardhat verify --network baseSepolia 0x64801c4e53b942Ff5d5eef0b77f4FA5024b03D56; \
 	else \
 		echo "Please specify a valid network (sepolia, amoy, or basesepolia)."; \
 	fi

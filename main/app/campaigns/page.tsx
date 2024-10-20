@@ -42,7 +42,7 @@ interface Campaign {
 }
 
 const contractABI = abi;
-const contractAddress = "0x518Cccfff4a08886B6ccb65B6aAE83af75Bc20c6";
+const contractAddress = "0x64801c4e53b942Ff5d5eef0b77f4FA5024b03D56";
 
 function SidebarDemo() {
   const account = useAccount();
