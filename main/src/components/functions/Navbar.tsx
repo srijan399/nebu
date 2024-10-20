@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ModeToggle } from "../theme/theme-switcher";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -26,14 +27,13 @@ export default function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="flex items-center justify-between w-full px-12 py-4 ">
+      <div className="flex items-center justify-between w-full px-12 py-4 pl-2">
         {/* Nebula Text Aligned to Start */}
-        <div className="flex justify-start">
+        <div className="flex items-center flex-row py-0 my-0">
           <Link href="/">
-            <span className="font-bold text-xl font-fredoka cursor-pointer">
-              Nebula
-            </span>
+            <Image src="/logo1.png" alt="Nebula Logo" width={40} height={50} />
           </Link>
+          <span className="font-fredoka font-extrabold">Nebula</span>
         </div>
 
         {/* Navigation Links Centered */}
