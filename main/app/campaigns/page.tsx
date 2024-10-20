@@ -228,7 +228,7 @@ function SidebarDemo() {
       {/* Conditionally render content based on activeTab */}
       <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full relative overflow-y-auto">
         {activeTab === "dashboard" && <Dashboard camps={campaigns} />}
-        {activeTab === "my-campaigns" && <MyCampaigns data={myData.data} />}
+        {activeTab === "my-campaigns" && <MyCampaigns data={myData.data as Campaign[]} />}
       </div>
     </div>
   );
@@ -505,8 +505,8 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
         </CardItem>
         <CardItem
           translateZ="100"
-          rotateX={20}
-          rotateZ={-10}
+          rotateX={0}
+          rotateZ={0}
           className="w-full mt-4"
         >
           <Image
