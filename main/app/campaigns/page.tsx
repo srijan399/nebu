@@ -20,6 +20,18 @@ import {
 } from "@tabler/icons-react";
 import AddCampaign from "@/components/functions/AddCampaign";
 import abi from "app/abi";
+import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
+import { Progress } from "@/components/ui/progress";
+
+interface Campaign {
+  name: string;
+  description: string;
+  goal: number;
+  deadline: number;
+  raised: number;
+  image: string;
+  funders: { funder: string; amount: number }[];
+}
 
 function SidebarDemo() {
   const account = useAccount();
@@ -30,8 +42,7 @@ function SidebarDemo() {
   const router = useRouter(); // Initialize useRouter
   const contractABI = abi;
   const contractAddress = "0x07bCD56CE70C891B1c019d36A404F4B681359802";
-
-  const [campaigns, setCampaigns] = useState([]);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
   const [myCampaigns, setMyCampaigns] = useState([]);
 
   const { data } = useReadContract({
@@ -105,13 +116,6 @@ function SidebarDemo() {
       ),
     },
     {
-      label: "Settings",
-      id: "settings",
-      icon: (
-        <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
-    },
-    {
       label: "Log Out",
       id: "back",
       icon: (
@@ -171,13 +175,12 @@ function SidebarDemo() {
       <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full relative overflow-y-auto">
         {activeTab === "dashboard" && <Dashboard camps={campaigns} />}
         {activeTab === "my-campaigns" && <MyCampaigns data={myData.data} />}
-        {activeTab === "settings" && <Settings />}
       </div>
     </div>
   );
 }
 
-function Dashboard(props) {
+function Dashboard(props: { camps: Campaign[] }) {
   const campaigns = props.camps;
   console.log(campaigns);
 
@@ -190,18 +193,7 @@ function Dashboard(props) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         {campaigns.length > 0 ? (
           campaigns.map((campaign, index) => (
-            <div
-              key={index}
-              className="bg-white dark:bg-neutral-800 rounded-2xl shadow-md"
-            >
-              <div className="p-4">
-                <p>{index}</p>
-                <h2 className="text-lg font-bold">{campaign.name}</h2>
-                <p className="text-sm text-neutral-500">
-                  {campaign.description}
-                </p>
-              </div>
-            </div>
+            <ThreeDCardDemo camp={campaign} idx={index} />
           ))
         ) : (
           <p>No campaigns available.</p>
@@ -211,7 +203,7 @@ function Dashboard(props) {
   );
 }
 
-function MyCampaigns(props) {
+function MyCampaigns(props: { data: Campaign[] }) {
   console.log("props:", props.data);
   const myCamps = props.data;
   return (
@@ -246,13 +238,6 @@ function MyCampaigns(props) {
     </div>
   );
 }
-
-const Settings = () => (
-  <div>
-    <h2 className="text-2xl font-bold">Settings</h2>
-    <p>This is the settings page content.</p>
-  </div>
-);
 
 export const Logo = () => {
   return (
@@ -291,5 +276,64 @@ export default function Campaign() {
         <SidebarDemo />
       </div>
     </>
+  );
+}
+
+export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
+  const { camp, idx } = props;
+
+  return (
+    <CardContainer
+      className="inter-var w-[60vh]"
+      containerClassName="w-[60vh] py-4"
+    >
+      <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border  ">
+        <CardItem
+          translateZ="50"
+          className="text-xl font-bold text-neutral-600 dark:text-white"
+        >
+          {camp.name}
+        </CardItem>
+        <CardItem
+          as="p"
+          translateZ="60"
+          className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
+        >
+          {camp.description}
+        </CardItem>
+        <CardItem
+          translateZ="100"
+          rotateX={20}
+          rotateZ={-10}
+          className="w-full mt-4"
+        >
+          <Image
+            src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            height="1000"
+            width="1000"
+            className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
+            alt="thumbnail"
+          />
+        </CardItem>
+        <div className="flex justify-between items-center mt-20">
+          <CardItem
+            translateZ={20}
+            translateX={-40}
+            as="button"
+            className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white"
+          >
+            <Progress value={33} />
+          </CardItem>
+          <CardItem
+            translateZ={20}
+            translateX={40}
+            as="button"
+            className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold"
+          >
+            Fund
+          </CardItem>
+        </div>
+      </CardBody>
+    </CardContainer>
   );
 }
