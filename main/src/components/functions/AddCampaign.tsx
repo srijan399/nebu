@@ -29,7 +29,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 const contractABI = abi;
-const contractAddress = "0xe7B54F0Fe576E8339152BCE26db002B455c24dE4";
+const contractAddress = "0x518Cccfff4a08886B6ccb65B6aAE83af75Bc20c6";
 
 const formSchema = z.object({
   description: z.string().min(5).max(200),

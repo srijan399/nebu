@@ -14,6 +14,7 @@ contract Nebula {
     }
 
     struct Campaign {
+        uint256 id;
         address owner;
         string name;
         uint256 goal;
@@ -57,6 +58,7 @@ contract Nebula {
         newCampaign.deadline = _deadline;
         newCampaign.description = _description;
         newCampaign.image = _image;
+        newCampaign.id = s_campaignCount;
 
         s_campaignCount++;
     }
@@ -104,25 +106,30 @@ contract Nebula {
     function getMyCampaigns(
         address _owner
     ) public view returns (Campaign[] memory) {
-        // First, count how many campaigns belong to the owner
         uint256 count = 0;
         uint256 copyofCampaignCount = s_campaignCount;
+
+        // Count the number of campaigns owned by the given address
         for (uint256 i = 0; i < copyofCampaignCount; i++) {
             if (campaigns[i].owner == _owner) {
                 count++;
             }
         }
 
-        // Create a new array of the correct size
+        // Create an array of the correct size to store the campaigns
         Campaign[] memory myCampaigns = new Campaign[](count);
         uint256 index = 0;
+
+        // Add each campaign with the owner's address and its ID to the array
         for (uint256 i = 0; i < copyofCampaignCount; i++) {
             if (campaigns[i].owner == _owner) {
-                myCampaigns[index] = campaigns[i];
+                Campaign memory campaign = campaigns[i];
+                campaign.id = i; // Set the campaign id
+                myCampaigns[index] = campaign; // Store the campaign in the array
                 index++;
             }
         }
 
-        return myCampaigns;
+        return myCampaigns; // Return only one array containing all campaigns with IDs
     }
 }

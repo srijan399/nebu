@@ -42,7 +42,7 @@ interface Campaign {
 }
 
 const contractABI = abi;
-const contractAddress = "0xe7B54F0Fe576E8339152BCE26db002B455c24dE4";
+const contractAddress = "0x518Cccfff4a08886B6ccb65B6aAE83af75Bc20c6";
 
 function SidebarDemo() {
   const account = useAccount();
@@ -52,7 +52,7 @@ function SidebarDemo() {
   const [activeTab, setActiveTab] = useState("dashboard"); // Added state for active tab
   const router = useRouter(); // Initialize useRouter
   const [campaigns, setCampaigns] = useState<any[]>([]);
-  const [myCampaigns, setMyCampaigns] = useState([]);
+  const [myCampaigns, setMyCampaigns] = useState<any[]>([]);
 
   const { data, refetch } = useReadContract({
     address: contractAddress,
@@ -86,6 +86,8 @@ function SidebarDemo() {
     functionName: "getMyCampaigns",
     args: [account?.address],
   });
+  
+  console.log("My data:", myData.data);
 
   useEffect(() => {
     // Log active tab for debugging purposes
@@ -118,8 +120,8 @@ function SidebarDemo() {
         console.log("No data found for this address.");
         return;
       } else {
-        console.log("Data found for this address.");
-        setCampaigns(myData.data);
+        console.log("Data found for this address.", myData.data);
+        setMyCampaigns(myData.data);
       }
     }
   }
@@ -232,6 +234,10 @@ function MyCampaigns(props: { data: Campaign[] }) {
   console.log("props:", props.data);
   const myCamps = props.data;
 
+  function withdrawFunds(idx: number) {
+    console.log("Withdraw funds", idx);
+  }
+
   return (
     <div>
       <h2 className="text-2xl font-bold">My Campaigns</h2>
@@ -267,7 +273,7 @@ function MyCampaigns(props: { data: Campaign[] }) {
                       />
                       <button
                         className="px-3 py-4 w-[40%] rounded-full bg-[#1ED760] font-bold text-white text-xs tracking-widest uppercase transform hover:scale-105 hover:bg-[#21e065] transition-colors duration-200"
-                        disabled
+                        onClick={() => withdrawFunds(index)}
                       >
                         Withdraw
                       </button>

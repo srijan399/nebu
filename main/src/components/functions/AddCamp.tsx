@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/popover";
 
 const contractABI = abi;
-const contractAddress = "0xDE115676F736F154eEF8398A37e4ACB4d61892e6";
+const contractAddress = "0x518Cccfff4a08886B6ccb65B6aAE83af75Bc20c6";
 
 // Define validation schema
 const formSchema = z.object({
