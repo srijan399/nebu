@@ -47,4 +47,4 @@ Have fun navigating through our application. Cheers!
 We welcome contributions! Please fork the repository and submit a pull request.
 
 # Current Status
-Although we haven't implemented the voting and proposal feature yet, we are continuously working to enhance the platform and address any challenges. We also plan to make this responsive in future versions. Furthermore, we plan to integrate BaseNames, allowing users to claim unique, human-readable names for their wallets, making transactions and interactions on the platform even more user-friendly.
+Although we haven't implemented the voting and proposal feature yet, we are continuously working to enhance the platform and address any challenges. We also plan to make this responsive in future versions. Furthermore, we plan to integrate `BaseNames`, allowing users to claim unique, human-readable names for their wallets, making transactions and interactions on the platform even more user-friendly.
