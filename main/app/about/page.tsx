@@ -1,39 +1,25 @@
 "use client";
-import { useScroll, useTransform } from "framer-motion";
 import React from "react";
-import { GoogleGeminiEffect } from "@/components/ui/google-gemini-effect";
+import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import Navbar from "@/components/functions/Navbar";
 
 export default function About() {
-  const ref = React.useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-
-  const pathLengthFirst = useTransform(scrollYProgress, [0, 0.8], [0.2, 1.2]);
-  const pathLengthSecond = useTransform(scrollYProgress, [0, 0.8], [0.15, 1.2]);
-  const pathLengthThird = useTransform(scrollYProgress, [0, 0.8], [0.1, 1.2]);
-  const pathLengthFourth = useTransform(scrollYProgress, [0, 0.8], [0.05, 1.2]);
-  const pathLengthFifth = useTransform(scrollYProgress, [0, 0.8], [0, 1.2]);
-
   return (
     <>
-      <div
-        className="h-[400vh] bg-black w-full dark:border dark:border-white/[0.1] rounded-md relative pt-40 overflow-clip"
-        ref={ref}
-      >
-        <Navbar />
-        <GoogleGeminiEffect
-          pathLengths={[
-            pathLengthFirst,
-            pathLengthSecond,
-            pathLengthThird,
-            pathLengthFourth,
-            pathLengthFifth,
-          ]}
-        />
-      </div>
+      <Navbar />
+      <BackgroundBeamsWithCollision>
+        <h2 className="text-2xl relative z-20 md:text-4xl lg:text-7xl font-bold text-center text-black dark:text-white font-sans tracking-tight">
+          What&apos;s cooler than Crowdfunding?{" "}
+          <div className="relative mx-auto inline-block w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
+            <div className="absolute left-0 top-[1px] bg-clip-text bg-no-repeat text-transparent bg-gradient-to-r py-4 from-purple-500 via-violet-500 to-pink-500 [text-shadow:0_0_rgba(0,0,0,0.1)]">
+              <span className="">Exploding beams.</span>
+            </div>
+            <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500 py-4">
+              <span className="">Exploding beams.</span>
+            </div>
+          </div>
+        </h2>
+      </BackgroundBeamsWithCollision>
     </>
   );
 }
