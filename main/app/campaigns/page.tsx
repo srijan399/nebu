@@ -406,7 +406,7 @@ export default function Campaign() {
   );
 }
 
-export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
+function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
   const { camp, idx } = props;
   const pol_to_eth = 0.00014;
 
