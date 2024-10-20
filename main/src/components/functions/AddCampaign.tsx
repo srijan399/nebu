@@ -22,26 +22,25 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { TiPlus } from "react-icons/ti";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 const contractABI = abi;
-const contractAddress = "0x07bCD56CE70C891B1c019d36A404F4B681359802";
+const contractAddress = "0x761eeF428035541f64EcB883bF3C067e8F398b84";
 
 const formSchema = z.object({
   description: z.string().min(5).max(200),
   imageUrl: z.string().url({ message: "Must be a valid URL" }),
   name: z.string().min(2).max(50),
-  deadline: z.date().refine((date) => date.getTime() > Date.now(), {
-    message: "Deadline must be a future date",
-  }).transform((val) => (val.getTime() / 1000)),
+  deadline: z
+    .date()
+    .refine((date) => date.getTime() > Date.now(), {
+      message: "Deadline must be a future date",
+    })
+    .transform((val) => val.getTime() / 1000),
   goal: z
     .string()
     .refine((val) => !isNaN(Number(val)), { message: "Must be a number" })
@@ -51,8 +50,12 @@ const formSchema = z.object({
 
 const AddCampaign = () => {
   const [isMounted, setIsMounted] = useState(false);
-  const [transactionStatus, setTransactionStatus] = useState<string | null>(null);
-  const [transactionHash, setTransactionHash] = useState<string | undefined>(undefined);
+  const [transactionStatus, setTransactionStatus] = useState<string | null>(
+    null
+  );
+  const [transactionHash, setTransactionHash] = useState<string | undefined>(
+    undefined
+  );
   const [open, setOpen] = useState(false); // State to handle dialog visibility
 
   useEffect(() => {
@@ -66,7 +69,7 @@ const AddCampaign = () => {
       imageUrl: "",
       name: "",
       deadline: new Date().getTime() / 1000,
-      goal: 1,
+      goal: 0,
     },
   });
 
@@ -94,27 +97,34 @@ const AddCampaign = () => {
           ],
         },
         {
-          onSuccess(data) {
+          onSuccess(data: any) {
             console.log("Transaction successful!", data);
+            setTransactionStatus("Transaction submitted!");
+            setTransactionHash(data?.hash); // Display the transaction hash
           },
-          onSettled(data, error) {
+          onSettled(data: any, error: any) {
             if (error) {
               setTransactionStatus("Transaction failed.");
               console.error("Error on settlement:", error);
             } else {
               console.log("Transaction settled:", data);
               setTransactionStatus("Transaction confirmed!");
-              setTransactionHash(data);
+              setTransactionHash(data?.hash);
 
               // Close the dialog and reset the form
               setOpen(false);
-              form.reset();
+              form.reset({
+                description: "",
+                imageUrl: "",
+                name: "",
+                deadline: new Date().getTime() / 1000,
+                goal: 0,
+              });
 
-              // Notify user about success
-              // alert("Campaign created successfully!");
+              // Reset any form input sizes if necessary
             }
           },
-          onError(error) {
+          onError(error: any) {
             console.error("Transaction error:", error);
             setTransactionStatus("Transaction failed. Please try again.");
           },
@@ -139,7 +149,20 @@ const AddCampaign = () => {
         </DialogTrigger>
         <DialogContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Campaign Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="description"
@@ -158,32 +181,6 @@ const AddCampaign = () => {
               />
               <FormField
                 control={form.control}
-                name="imageUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Image URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter image URL" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="goal"
                 render={({ field }) => (
                   <FormItem>
@@ -191,9 +188,22 @@ const AddCampaign = () => {
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Enter your goal"
+                        placeholder="Enter your goal (in POL)"
                         {...field}
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Image URL</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter image URL" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -245,10 +255,8 @@ const AddCampaign = () => {
               {error && <p className="text-red-500">Error: {error.message}</p>}
             </form>
           </Form>
-
           {transactionStatus && (
             <div className="mt-4">
-              <p>Status: {transactionStatus}</p>
               {transactionHash && (
                 <p>
                   View on oklink:{" "}

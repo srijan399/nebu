@@ -6,10 +6,16 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useDisconnect, useAccount, useReadContract } from "wagmi";
+import {
+  useDisconnect,
+  useAccount,
+  useReadContract,
+  useWriteContract,
+  useBalance,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { TiPlus } from "react-icons/ti";
 import { IoMdWallet } from "react-icons/io";
 import { Lens } from "@/components/ui/lens";
 import {
@@ -21,7 +27,9 @@ import {
 import AddCampaign from "@/components/functions/AddCampaign";
 import abi from "app/abi";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
-import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { ProgressDemo } from "@/components/functions/ProgressBar";
 
 interface Campaign {
   name: string;
@@ -33,6 +41,9 @@ interface Campaign {
   funders: { funder: string; amount: number }[];
 }
 
+const contractABI = abi;
+const contractAddress = "0x761eeF428035541f64EcB883bF3C067e8F398b84";
+
 function SidebarDemo() {
   const account = useAccount();
   // const [hovering, setHovering] = useState(false);
@@ -40,17 +51,32 @@ function SidebarDemo() {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard"); // Added state for active tab
   const router = useRouter(); // Initialize useRouter
-  const contractABI = abi;
-  const contractAddress = "0x07bCD56CE70C891B1c019d36A404F4B681359802";
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [myCampaigns, setMyCampaigns] = useState([]);
 
-  const { data } = useReadContract({
+  const { data, refetch } = useReadContract({
     address: contractAddress,
     abi: contractABI,
     functionName: "getCampaigns",
-    refetchInterval: 1000,
   });
+
+  useEffect(() => {
+    console.log("Setting up refetch interval");
+
+    const interval = setInterval(() => {
+      refetch()
+        .then((result: any) => {
+          console.log("Data refetched: ", result);
+        })
+        .catch((error: any) => {
+          console.error("Error during refetch: ", error);
+        });
+    }, 5000);
+    return () => {
+      console.log("Clearing refetch interval");
+      clearInterval(interval);
+    };
+  }, [refetch]);
 
   // console.log(data);
 
@@ -60,8 +86,6 @@ function SidebarDemo() {
     functionName: "getMyCampaigns",
     args: [account?.address],
   });
-
-  console.log("Mydata:", myData);
 
   useEffect(() => {
     // Log active tab for debugging purposes
@@ -209,32 +233,38 @@ function MyCampaigns(props: { data: Campaign[] }) {
   return (
     <div>
       <h2 className="text-2xl font-bold">My Campaigns</h2>
-      {myCamps.map((camp, index) => (
-        <div className="w-96 relative rounded-3xl overflow-hidden max-w-full bg-gradient-to-r from-[#1D2235] to-[#121318] my-10">
-          <div className="relative z-10">
-            <Lens hovering={false}>
-              <Image
-                src="https://images.unsplash.com/photo-1713869820987-519844949a8a?q=80&w=3500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="image"
-                width={500}
-                height={500}
-                className="rounded-2xl w-full h-auto"
-              />
-            </Lens>
-            <motion.div className="py-4 relative z-20 px-4 pt-4 sm:px-6 sm:pt-6 md:px-8 md:pt-8">
-              <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold text-left">
-                {camp.name}
-              </h2>
-              <p className="text-neutral-200 text-left mt-4 text-sm sm:text-base md:text-base">
-                {camp.description}
-              </p>
-              <p className="text-neutral-200 text-left mt-4 text-sm sm:text-base md:text-base">
-                {camp.goal}
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+        {myCamps.length > 0 ? (
+          myCamps.map((camp, index) => (
+            <div className="w-96 relative rounded-3xl overflow-hidden max-w-full bg-gradient-to-r from-[#1D2235] to-[#121318] my-10">
+              <div className="relative z-10">
+                <Lens hovering={false}>
+                  <Image
+                    src={camp.image}
+                    alt={camp.name}
+                    width={350}
+                    height={350}
+                    className="rounded-2xl w-full h-auto"
+                  />
+                </Lens>
+                <motion.div className="py-4 relative z-20 px-4 pt-4 sm:px-6 sm:pt-6 md:px-8 md:pt-8">
+                  <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold text-left">
+                    {camp.name}
+                  </h2>
+                  <p className="text-neutral-200 text-left my-4 text-sm sm:text-base md:text-base font-fredoka">
+                    {camp.description}
+                  </p>
+                  <button className="shadow-[0_0_0_3px_#000000_inset] px-2 w-32 text-base py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 mt-2 disabled">
+                    Goal: {Number(camp.goal)} POL
+                  </button>
+                </motion.div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No campaigns available.</p>
+        )}
+      </div>
     </div>
   );
 }
@@ -282,24 +312,94 @@ export default function Campaign() {
 export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
   const { camp, idx } = props;
 
+  const [open, setOpen] = useState(false); // State to control dialog visibility
+  const [raised, setRaised] = useState<number>(0); // State to store raised amount
+  const [fund, setFund] = useState<string>(""); // State to store fund input as a string
+  const { address } = useAccount();
+
+  const { writeContractAsync } = useWriteContract();
+  const { data: campaign, refetch } = useReadContract({
+    address: contractAddress,
+    abi: contractABI,
+    functionName: "campaigns",
+    args: [idx],
+  });
+
+  // Update the raised amount when campaign data is loaded
+  useEffect(() => {
+    if (campaign) {
+      const newRaisedAmount = Number(campaign[4]); // Adjust index if necessary
+      console.log("Updated raised amount:", newRaisedAmount);
+      setRaised(newRaisedAmount);
+    }
+  }, [campaign]);
+
+  async function handleFund() {
+    if (address && Number(fund) > 0) {
+      try {
+        console.log("Funding campaign...");
+        console.log("Index: ", idx);
+        console.log("Funding amount: ", fund);
+
+        const tx = await writeContractAsync({
+          address: contractAddress,
+          abi: contractABI,
+          functionName: "fundCampaign",
+          args: [idx],
+          value: BigInt(Number(fund) * 10 ** 18),
+        });
+
+        const {
+          isSuccess,
+          isError,
+          data: receipt,
+        } = await useWaitForTransactionReceipt({
+          hash: tx.hash,
+        });
+
+        if (isSuccess) {
+          console.log("Transaction successful:", receipt);
+          // Refetch campaign data after funding
+          await refetch();
+        } else if (isError) {
+          console.error("Transaction failed");
+        }
+      } catch (error) {
+        console.error("Error funding campaign:", error);
+      }
+    } else {
+      console.error("Fund amount must be greater than 0");
+    }
+  }
+
   return (
     <CardContainer
       className="inter-var w-[60vh]"
       containerClassName="w-[60vh] py-4"
     >
-      <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border  ">
+      <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border">
         <CardItem
           translateZ="50"
-          className="text-xl font-bold text-neutral-600 dark:text-white"
+          className="text-xl font-bold text-neutral-600 dark:text-white font-fredoka"
         >
           {camp.name}
         </CardItem>
         <CardItem
           as="p"
           translateZ="60"
-          className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
+          className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300 font-fredoka"
         >
           {camp.description}
+        </CardItem>
+        <CardItem
+          as="p"
+          translateZ="60"
+          className="text-white-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
+        >
+          {/* <button className="px-8 py-0.5  border-2 border-black dark:border-white uppercase bg-white text-black transition duration-200 text-sm shadow-[1px_1px_rgba(0,0,0),2px_2px_rgba(0,0,0),3px_3px_rgba(0,0,0),4px_4px_rgba(0,0,0),5px_5px_0px_0px_rgba(0,0,0)] dark:shadow-[1px_1px_rgba(255,255,255),2px_2px_rgba(255,255,255),3px_3px_rgba(255,255,255),4px_4px_rgba(255,255,255),5px_5px_0px_0px_rgba(255,255,255)] "></button> */}
+          <button className="shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 mt-2 disabled">
+            Goal: {Number(camp.goal)} POL
+          </button>
         </CardItem>
         <CardItem
           translateZ="100"
@@ -308,32 +408,57 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
           className="w-full mt-4"
         >
           <Image
-            src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src={camp.image}
             height="1000"
             width="1000"
             className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
             alt="thumbnail"
           />
         </CardItem>
-        <div className="flex justify-between items-center mt-20">
+        <div className="flex justify-between items-center mt-10">
           <CardItem
             translateZ={20}
             translateX={-40}
             as="button"
             className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white"
           >
-            <Progress value={33} />
+            <ProgressDemo raised={raised} goal={Number(camp.goal)} />
           </CardItem>
           <CardItem
             translateZ={20}
             translateX={40}
             as="button"
             className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold"
+            onClick={() => setOpen(true)}
           >
             Fund
           </CardItem>
         </div>
       </CardBody>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="w-68">
+          <Input
+            placeholder="Enter amount in POL"
+            type="number"
+            value={fund}
+            onChange={(e) => setFund(e.target.value)} // Update fund value
+            style={{
+              appearance: "none", // Remove spinner arrows
+            }}
+            className="w-52 mt-4"
+          />
+          <button
+            className="px-8 py-2 rounded-md bg-teal-500 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-teal-500"
+            onClick={() => {
+              handleFund();
+              setOpen(false); // Close the dialog here
+            }}
+          >
+            Fund
+          </button>
+        </DialogContent>
+      </Dialog>
     </CardContainer>
   );
 }

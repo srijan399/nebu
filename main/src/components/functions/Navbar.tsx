@@ -41,7 +41,6 @@ export default function Navbar() {
         <div className="hidden md:flex items-center justify-center gap-6 ml-24">
           <NavLink href="/">Home</NavLink>
           <NavLink href="/campaigns">Campaigns</NavLink>
-          <NavLink href="/governance">Governance</NavLink>
           {isConnected && (
             <NavLink href="/contribution">My Contributions</NavLink>
           )}
