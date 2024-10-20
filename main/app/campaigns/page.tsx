@@ -246,8 +246,8 @@ function Dashboard(props: { camps: Campaign[] }) {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         {campaigns.length > 0 ? (
-          campaigns.map((campaign, index, key) => (
-            <ThreeDCardDemo camp={campaign} idx={index} />
+          campaigns.map((campaign, index) => (
+            <ThreeDCardDemo camp={campaign} idx={index} key={index} />
           ))
         ) : (
           <p>No campaigns available.</p>
@@ -316,7 +316,10 @@ function MyCampaigns(props: { data: Campaign[] }) {
         {address ? (
           myCamps.length > 0 ? (
             myCamps.map((camp, index) => (
-              <div className="w-96 relative rounded-3xl overflow-hidden max-w-full bg-gradient-to-r from-[#1D2235] to-[#121318] my-10">
+              <div
+                className="w-96 relative rounded-3xl overflow-hidden max-w-full bg-gradient-to-r from-[#1D2235] to-[#121318] my-10"
+                key={index}
+              >
                 <div className="relative z-10">
                   <Lens hovering={false}>
                     <Image
