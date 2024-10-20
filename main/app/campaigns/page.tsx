@@ -32,6 +32,8 @@ import { Input } from "@/components/ui/input";
 import { ProgressDemo } from "@/components/functions/ProgressBar";
 
 interface Campaign {
+  owner: string;
+  id: number;
   name: string;
   description: string;
   goal: number;
@@ -87,6 +89,33 @@ function SidebarDemo() {
     args: [account?.address],
   });
   
+  const { refetch: refetchMyCampaigns } = useReadContract({
+    address: contractAddress,
+    abi: contractABI,
+    functionName: "getMyCampaigns",
+    args: [account?.address],
+  });
+  
+  useEffect(() => {
+    console.log("Setting up refetch interval for getMyCampaigns");
+  
+    const interval = setInterval(() => {
+      refetchMyCampaigns()
+        .then((result) => {
+          console.log("MyCampaigns data refetched: ", result);
+        })
+        .catch((error) => {
+          console.error("Error during refetch of MyCampaigns: ", error);
+        });
+    }, 5000);
+  
+    return () => {
+      console.log("Clearing refetch interval for getMyCampaigns");
+      clearInterval(interval);
+    };
+  }, [refetchMyCampaigns]);
+  
+
   console.log("My data:", myData.data);
 
   useEffect(() => {
@@ -179,14 +208,13 @@ function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: `${
-                  account?.address
+                label: `${account?.address
                     ? `${account?.address.slice(
-                        0,
-                        7
-                      )}...${account?.address.slice(-5)}`
+                      0,
+                      7
+                    )}...${account?.address.slice(-5)}`
                     : "Wallet not connected"
-                }`,
+                  }`,
                 href: "",
                 icon: (
                   <IoMdWallet className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
@@ -230,12 +258,55 @@ function Dashboard(props: { camps: Campaign[] }) {
 }
 
 function MyCampaigns(props: { data: Campaign[] }) {
+  const [transactionStatus, setTransactionStatus] = useState<string | null>(
+    null
+  );
+  const [transactionHash, setTransactionHash] = useState<string | undefined>(
+    undefined
+  );
+  const { writeContractAsync } = useWriteContract();
   const { address } = useAccount();
   console.log("props:", props.data);
   const myCamps = props.data;
 
-  function withdrawFunds(idx: number) {
+  async function withdrawFunds(idx: number) {
     console.log("Withdraw funds", idx);
+
+    try {
+      // Call the smart contract function with form data using writeContractAsync
+      const tx = await writeContractAsync(
+        {
+          address: contractAddress,
+          abi: contractABI,
+          functionName: "withdrawFunds",
+          args: [idx],
+        },
+        {
+          onSuccess(data) {
+            console.log("Transaction successful!", data);
+            // setTransactionStatus("Transaction submitted!");
+            // setTransactionHash(data);
+          },
+          onSettled(data, error) {
+            if (error) {
+              setTransactionStatus("Transaction failed.");
+              console.error("Error on settlement:", error);
+            } else {
+              console.log("Transaction settled:", data);
+              setTransactionStatus("Transaction confirmed!");
+              setTransactionHash(data);
+            }
+          },
+          onError(error) {
+            console.error("Transaction error:", error);
+            setTransactionStatus("Transaction failed. Please try again.");
+          },
+        }
+      );
+    } catch (err) {
+      console.error("Error submitting transaction:", err);
+      setTransactionStatus("Transaction failed. Please try again.");
+    }
   }
 
   return (
@@ -253,7 +324,7 @@ function MyCampaigns(props: { data: Campaign[] }) {
                       alt={camp.name}
                       width={350}
                       height={350}
-                      className="rounded-2xl w-full h-auto"
+                      className="rounded-2xl w-full"
                     />
                   </Lens>
                   <motion.div className="py-4 relative z-20 px-4 pt-4 sm:px-6 sm:pt-6 md:px-8 md:pt-8">
@@ -273,7 +344,7 @@ function MyCampaigns(props: { data: Campaign[] }) {
                       />
                       <button
                         className="px-3 py-4 w-[40%] rounded-full bg-[#1ED760] font-bold text-white text-xs tracking-widest uppercase transform hover:scale-105 hover:bg-[#21e065] transition-colors duration-200"
-                        onClick={() => withdrawFunds(index)}
+                        onClick={() => withdrawFunds(Number(camp.id))}
                       >
                         Withdraw
                       </button>
@@ -337,7 +408,8 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
   const { camp, idx } = props;
   const pol_to_eth = 0.00014;
 
-  const [open, setOpen] = useState(false); // State to control dialog visibility
+  const [open, setOpen] = useState(false); // State to control fund dialog visibility
+  const [ownerDialogOpen, setOwnerDialogOpen] = useState(false); // State to control owner dialog visibility
   const [raised, setRaised] = useState<number>(0); // State to store raised amount
   const [fund, setFund] = useState<string>(""); // State to store fund input as a string
   const { address } = useAccount();
@@ -424,7 +496,6 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
           translateZ="60"
           className="text-white-500 text-sm max-w-sm mt-2 dark:text-neutral-300 flex items-center font-fredoka space-x-5"
         >
-          {/* <button className="px-8 py-0.5  border-2 border-black dark:border-white uppercase bg-white text-black transition duration-200 text-sm shadow-[1px_1px_rgba(0,0,0),2px_2px_rgba(0,0,0),3px_3px_rgba(0,0,0),4px_4px_rgba(0,0,0),5px_5px_0px_0px_rgba(0,0,0)] dark:shadow-[1px_1px_rgba(255,255,255),2px_2px_rgba(255,255,255),3px_3px_rgba(255,255,255),4px_4px_rgba(255,255,255),5px_5px_0px_0px_rgba(255,255,255)] "></button> */}
           <button className="shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 mt-2 disabled">
             Goal: {Number(camp.goal) / 10 ** 18} POL
           </button>
@@ -460,13 +531,21 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
             translateX={40}
             as="button"
             className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold"
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              // Check if the user is the campaign owner
+              if (address === camp.owner) {
+                setOwnerDialogOpen(true); // Open owner dialog
+              } else {
+                setOpen(true); // Open fund dialog for other users
+              }
+            }}
           >
             Fund
           </CardItem>
         </div>
       </CardBody>
 
+      {/* Dialog for funding */}
       <Dialog open={open} onOpenChange={setOpen}>
         {address ? (
           <DialogContent className="w-68">
@@ -484,7 +563,7 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
               className="px-8 py-2 rounded-md bg-teal-500 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-teal-500"
               onClick={() => {
                 handleFund();
-                setOpen(false); // Close the dialog here
+                setOpen(false); // Close the dialog after funding
               }}
             >
               Fund
@@ -496,6 +575,15 @@ export function ThreeDCardDemo(props: { camp: Campaign; idx: number }) {
           </DialogContent>
         )}
       </Dialog>
+
+      {/* Dialog for campaign owner */}
+      <Dialog open={ownerDialogOpen} onOpenChange={setOwnerDialogOpen}>
+        <DialogContent className="w-68">
+          <p className="text-center font-bold py-3">You are the owner of the Campaign.</p>
+        </DialogContent>
+      </Dialog>
     </CardContainer>
   );
 }
+
+
